@@ -243,28 +243,24 @@
             recalculateStoreStatsMetrics();
         });
 
-        // FIXED REAL-TIME AUTOMATIC RENDER: Realtime syncing loop triggered instantly
-        rdb.ref('orders').on('value', snap => {
-            const data = snap.val() || {};
-            const currentOrdersCount = Object.keys(data).length;
-            
-            // Auto re-renders the DOM elements instantly without requiring pull/refresh sequences
-            renderAdminLiveOrdersDashboardQueue(data);
-            recalculateStoreStatsMetrics(data);
+        // Isse naya order aate hi bina page refresh kiye screen par khud dikh jayega
+rdb.ref('orders').on('value', snap => {
+    const data = snap.val() || {};
+    const currentOrdersCount = Object.keys(data).length;
+    
+    // Aapka purana table/list bina refresh kiye turant update hoga
+    renderAdminLiveOrdersDashboardQueue(data);
+    recalculateStoreStatsMetrics(data);
 
-            if (lastPlacedOrderId && data[lastPlacedOrderId]) {
-                updateLiveTrackingVisualSteps(data[lastPlacedOrderId].status);
-            }
-
-            if (initialSyncCompleted) {
-                if (currentOrdersCount > lastKnownOrdersCount) {
-                    triggerLoudOrderAlertChimeLoop();
-                }
-            } else {
-                initialSyncCompleted = true;
-            }
-            lastKnownOrdersCount = currentOrdersCount;
-        });
+    if (initialSyncCompleted) {
+        if (currentOrdersCount > lastKnownOrdersCount) {
+            triggerLoudOrderAlertChimeLoop();
+        }
+    } else {
+        initialSyncCompleted = true;
+    }
+    lastKnownOrdersCount = currentOrdersCount;
+});
 // ==========================================
 // PART 19: Alarm Loop Ingestion Handlers & Audio Drivers
 // ==========================================
