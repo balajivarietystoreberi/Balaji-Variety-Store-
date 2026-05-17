@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balaji Variety Store - New Generation Grocery</title>
+    <title>Balaji Variety Store - Next-Gen Grocery</title>
     
-    <!-- Tailwind CSS for Modern Styling -->
+    <!-- Tailwind UI Framework & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase Core App & RTDB Legacy SDKs -->
+    <!-- Firebase Core App & Realtime Database Legacy SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <!-- HTML2PDF Library -->
+    <!-- HTML2PDF Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
@@ -25,11 +25,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s; }
         
-        /* Modern E-Commerce Card Style (Not Food App) */
+        /* Blinkit Style Premium Grocery Shelf Cards */
         .premium-grocery-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .premium-grocery-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(16, 185, 129, 0.08); border-color: #a7f3d0; }
         
-        /* New Slider Drawer UI instead of Sheet */
+        /* Modern Bottom Slide Drawer instead of outdated sheets */
         .modern-drawer { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-radius: 24px 24px 0 0; transform: translateY(110%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); z-index: 100; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
         .modern-drawer.active { transform: translateY(0); }
         
@@ -37,23 +37,23 @@
         .active-pill-tab { background: #059669 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 pb-32">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-gray-100 pb-32">
 
-<!-- Ringer Alert Framework for New Orders -->
+<!-- Audio Element Layer Node for Incoming Alert Chimes -->
 <audio id="order-alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav" preload="auto"></audio>
 
-<!-- Smart PWA Installation Card -->
+<!-- Smart PWA App Installation Module Banner -->
 <div id="pwa-prompt" class="hidden fixed top-4 inset-x-4 max-w-sm mx-auto bg-slate-900 dark:bg-emerald-900 text-white p-3 rounded-xl shadow-2xl z-[9000] flex justify-between items-center border border-slate-800">
     <div class="flex items-center gap-2">
         <span class="text-lg">🛍️</span>
         <div>
             <p class="text-xs font-bold">App Install Karein</p>
-            <p class="text-[10px] opacity-80">Ek click me shopping shuru karein</p>
+            <p class="text-[10px] opacity-80">Ek click me direct order lgao</p>
         </div>
     </div>
     <button id="btn-pwa-install" class="bg-emerald-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase">Get App</button>
 </div>
-<!-- Store Status Screen Block -->
+<!-- Secure Shop Closed Barrier Layer Drop -->
 <div id="closed-screen" class="hidden fixed inset-0 bg-slate-50 dark:bg-slate-950 z-[5000] flex flex-col items-center justify-center p-6 text-center">
     <div class="w-16 h-16 bg-rose-50 text-rose-500 dark:bg-rose-950/30 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-inner">🔒</div>
     <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-200">Dukan Abhi Band Hai</h2>
@@ -61,11 +61,14 @@
     <button onclick="loginAdminDashboard()" class="mt-6 px-5 py-2 bg-slate-200 dark:bg-slate-900 border dark:border-slate-800 rounded-lg text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-800 transition-colors">Owner Login</button>
 </div>
 
-<!-- Clean E-Commerce Minimal Top Navigation -->
+<!-- Premium Minimal E-Commerce Top Header Navigation -->
 <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 py-3 flex justify-between items-center shadow-sm">
-    <div class="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700 shadow-md flex items-center justify-center bg-white flex-shrink-0">
-    <img src="https://i.ibb.co/G48gWPYQ/1778990954256.png" alt="Balaji Variety Store Logo" class="w-full h-full object-cover">
-</div>
+    <div class="flex items-center gap-2.5">
+        <!-- Big Size Optimized Rounded Image Logo Container Bracket -->
+        <div class="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700 shadow-md flex items-center justify-center bg-white flex-shrink-0">
+            <img src="https://i.ibb.co/G48gWPYQ/1778990954256.png" alt="Balaji Variety Store Logo" class="w-full h-full object-cover">
+        </div>
+        <div>
             <h1 class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white leading-tight">Balaji Variety Store</h1>
             <div class="flex items-center gap-1.5 mt-0.5 text-[10px] font-bold text-slate-400 dark:text-slate-500">
                 <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
@@ -81,9 +84,10 @@
         <button onclick="loginAdminDashboard()" class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-shield"></i></button>
     </div>
 </header>
+
 <div class="max-w-2xl mx-auto px-4 py-4">
 
-    <!-- Admin Master Dashboard Controls (Grid Update) -->
+    <!-- Administrative Master Workspace Dashboard Panel Control Layout -->
     <div id="admin-panel" class="hidden bg-slate-900 rounded-2xl shadow-xl p-5 mb-6 text-white border border-slate-800">
         <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2.5">
             <h2 class="text-xs font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> Store Admin Panel</h2>
@@ -94,7 +98,6 @@
         </div>
 
         <button id="toggle-shop-btn" onclick="executeShopStatusToggle()" class="w-full py-2 rounded-lg font-bold mb-4 text-xs tracking-wider uppercase transition-colors">Syncing Status...</button>
-
         <div class="grid grid-cols-3 gap-2 mb-4">
             <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
                 <p id="stat-revenue" class="text-base font-black text-emerald-400">₹0</p>
@@ -109,36 +112,42 @@
                 <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Top Selling</p>
             </div>
         </div>
-        <!-- Admin Add Grocery Product Controls Layout -->
+
+        <!-- Direct Row-Wise Bulk Upload Control Panel Structure Element Node -->
         <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800/80 mb-4">
-            <p class="font-bold text-slate-400 text-[9px] mb-2 uppercase tracking-wider">Stock Control Form</p>
-            <div class="grid grid-cols-12 gap-1.5 mb-2">
-                <input id="new-i" placeholder="🍏" class="col-span-2 p-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs outline-none text-white">
-                <input id="new-n" placeholder="Product details (e.g. Fortune Oil 1L)" class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-white">
-                <input id="new-p" type="number" placeholder="Price" class="col-span-3 p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-white">
+            <p class="font-bold text-amber-400 text-[10px] mb-1 uppercase tracking-wider flex items-center gap-1">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Direct Bulk Upload Mode
+            </p>
+            <p class="text-[9px] text-slate-400 mb-3">Niche diye gaye order me line-by-line saare items paste karein:<br>
+                <span class="text-emerald-400">Line 1: Name, Line 2: Price, Line 3: Photo Link</span>
+            </p>
+            <div class="mb-3">
+                <select id="new-cat" class="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-slate-400 mb-2">
+                    <option value="All">📂 Pehle Category Chunein</option>
+                    <option value="Snacks">🍪 Snacks & Biscuits</option>
+                    <option value="Grains">🌾 Daal & Chawal</option>
+                    <option value="Oils">🌶️ Oil & Spices</option>
+                    <option value="Dairy">🥛 Daily Milk & Dairy</option>
+                    <option value="Other">🧼 Household & Cleaning</option>
+                </select>
+                
+                <textarea id="bulk-products-area" rows="6" placeholder="Fortune Oil&#10;175&#10;https://i.ibb.co/Y7fkZ9Nz/oil.jpg&#10;Tata Salt&#10;28&#10;https://i.ibb.co/Y7fkZ9Nz/salt.jpg" class="w-full p-3 bg-slate-900 border border-slate-800 rounded-xl text-xs outline-none text-white font-mono scroll-hide"></textarea>
             </div>
-            <div class="grid grid-cols-12 gap-1.5">
-             <select id="new-cat" class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-slate-400">
-    <option value="All">📂 Choose Category</option>
-    <option value="Snacks">🍪 Snacks & Biscuits</option>
-    <option value="Grains">🌾 Daal & Chawal</option>
-    <option value="Oils">🌶️ Oil & Spices</option>
-    <option value="Dairy">🥛 Daily Milk & Dairy</option>
-    <option value="Other">🧼 Household & Cleaning</option>
-</select>
-                <button onclick="commitNewProductToDatabase()" class="col-span-5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg tracking-wider uppercase">Save Product</button>
-            </div>
-            <div id="admin-menu-list" class="space-y-1.5 max-h-40 overflow-y-auto mt-3 pr-1 scroll-hide"></div>
+            
+            <button onclick="executeDirectRowBulkUpload()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-lg text-xs tracking-wider uppercase shadow-md">
+                Turant Saare Products Upload Karein 🚀
+            </button>
+            
+            <div id="admin-menu-list" class="space-y-1.5 max-h-40 overflow-y-auto mt-4 pr-1 scroll-hide"></div>
         </div>
 
-        <!-- Live Orders Dynamic Queue Pipeline Stack -->
+        <!-- Live Orders Dynamic Queue Pipeline Stack Node View -->
         <div class="border-t border-slate-800 pt-3">
             <p class="font-bold text-slate-300 text-xs mb-2 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Grocery Shipments Queue</p>
             <div id="admin-orders-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 scroll-hide"></div>
         </div>
     </div>
-
-    <!-- Redesigned Search Input Node Frame with Voice recognition module hooks -->
+    <!-- Unified Search Component UI Field Wrapper Node with Voice Engine Hooks -->
     <div class="relative mb-5 flex gap-2">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -147,16 +156,16 @@
         </div>
     </div>
 
-    <!-- Category Pill Filter Grid System Elements Layer Node -->
+    <!-- Category Pill Filter Layout Horizontal Rail -->
     <div id="cat-tabs" class="flex gap-1.5 overflow-x-auto pb-2 mb-5 scroll-hide"></div>
 
-    <!-- Primary Catalog Header Label Grid Layout Matrix Wrapper -->
+    <!-- Primary Catalog Shelf Display Frame -->
     <div class="flex justify-between items-center mb-4 border-b border-slate-200/60 dark:border-slate-800/80 pb-2">
         <h2 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">E-Commerce Shelf Catalogue</h2>
     </div>
     <div id="menu-box" class="grid grid-cols-2 gap-3"></div>
 </div>
-<!-- Redesigned Minimal Floating Pill Basket Button Interface Node Component -->
+<!-- Redesigned Minimal Floating Pill Basket Notification Controller Hook Link -->
 <div id="floating-cart" class="fixed bottom-6 right-4 left-4 max-w-sm mx-auto z-40 transition-all duration-300 translate-y-36">
     <div onclick="toggleCheckoutDrawerState(true)" class="bg-slate-900 dark:bg-emerald-600 p-3.5 rounded-xl shadow-2xl flex justify-between items-center text-white cursor-pointer hover:opacity-95">
         <div class="flex items-center gap-2.5">
@@ -170,11 +179,11 @@
     </div>
 </div>
 
-<!-- Redesigned Slide-up Drawer UI Architecture System Component Layer Frame -->
+<!-- Premium Slide-up Navigation Modal Basket Drawer System Frame Component Layout Layer -->
 <div id="checkout-sheet" class="modern-drawer max-w-2xl mx-auto dark:bg-slate-900 border border-t-slate-200 dark:border-slate-800">
     <div class="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/40 rounded-t-3xl">
         <h3 class="font-extrabold text-sm text-slate-800 dark:text-slate-200">Review Basket Summary</h3>
-        <button onclick="toggleCheckoutDrawerState(false)" class="w-7 h-7 bg-white dark:bg-slate-800 border dark:border-slate-700 text-slate-400 rounded-full flex items-center justify-center shadow-sm"><i class="fa-solid fa-xmark text-xs"></i></button>
+        <button onclick="toggleCheckoutDrawerState(false)" class="w-7 h-7 bg-white dark:bg-slate-800 border dark:border-slate-700 text-gray-400 rounded-full flex items-center justify-center shadow-sm"><i class="fa-solid fa-xmark text-xs"></i></button>
     </div>
     <div class="p-4 overflow-y-auto space-y-4 max-h-[75vh] scroll-hide">
         <div class="bg-slate-50 dark:bg-slate-950/40 p-3 rounded-xl border dark:border-slate-800">
@@ -185,16 +194,16 @@
             </div>
         </div>
 
-        <!-- Address Slots node multi node framework layout mapping -->
+        <!-- Saved Locations Storage Array Mapping Node Block -->
         <div>
             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Saved Delivery Locations</p>
             <div id="address-slots-container" class="flex gap-1.5 overflow-x-auto pb-1 scroll-hide"></div>
         </div>
-        <!-- Client Delivery Parameters Form Inputs Stack Element -->
+
+        <!-- Customer Core Logistics Billing Form Matrix Layer Fields Parameters Input -->
         <div class="space-y-2">
             <input id="u-n" placeholder="Customer Full Name *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
             <input id="u-p" type="tel" placeholder="Mobile Number *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
-            
             <div class="relative">
                 <input id="u-a" placeholder="Complete Home Delivery Address *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
                 <button onclick="commitNewLocationSlotToStorage()" type="button" class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 border dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-[8px] px-2 py-1 rounded uppercase">Save Slot</button>
@@ -218,21 +227,21 @@
         <button onclick="evaluateCheckoutGatewayPipeline()" class="w-full bg-emerald-600 text-white font-extrabold py-3 rounded-lg text-xs tracking-wider uppercase shadow-md">Confirm Grocery Dispatch Order 🚀</button>
     </div>
 </div>
-
-<!-- Modern Payment QR Modal Window Frame Node (Updated with Final Correct QR) -->
+<!-- Modern Payment UPI Merchant QR Code Popup Modal Window System Component Layer -->
 <div id="qr-modal" class="hidden fixed inset-0 bg-slate-950/90 z-[6000] flex items-center justify-center p-5 text-center backdrop-blur-sm">
     <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 max-w-xs w-full shadow-2xl border dark:border-slate-800">
         <h3 class="font-extrabold text-sm text-slate-800 dark:text-white tracking-tight uppercase">UPI Merchant Checkout Gate</h3>
         <p class="text-[9px] text-slate-400 font-bold mb-3">Scan code using any UPI App to process transaction</p>
         
-        <!-- Aapka Ekdum Asli Final QR Code Link Yahan Laga Diya Hai -->
-        <img src="https://i.ibb.co/Y7fkZ9Nz/IMG-20260517-WA0000.jpg" class="w-full rounded-xl border dark:border-slate-800 mb-4 p-0.5 bg-white shadow-inner" alt="Balaji Variety Store Final UPI QR">
+        <!-- FIX: Absolute Core Original Secure Target Payment Image Node Link Array Built In Exactly -->
+        <img src="https://i.ibb.co/Y7fkZ9Nz/IMG-20260517-WA0000.jpg" class="w-full rounded-xl border dark:border-slate-800 mb-4 p-0.5 bg-white shadow-inner" alt="Balaji Variety Store Final Genuine UPI QR">
         
         <button onclick="writeOrderPayloadToFirebaseRTDB('PAID')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wide uppercase">✅ Payment Completed Done</button>
         <button onclick="document.getElementById('qr-modal').classList.add('hidden')" class="text-slate-400 font-bold text-[9px] uppercase tracking-widest mt-3 block mx-auto hover:text-gray-600">Cancel Payment</button>
     </div>
 </div>
-<!-- Live Tracking Pipeline Status Stream Modal Frame Element Node Component Layer Grid -->
+
+<!-- Realtime Delivery Shipment Status Pipeline Tracking System Interface Frame -->
 <div id="tracker-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[4000] flex items-end justify-center">
     <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl p-4 max-h-[85vh] flex flex-col">
         <div class="flex justify-between items-center mb-3 border-b dark:border-slate-800 pb-2">
@@ -247,7 +256,7 @@
     </div>
 </div>
 
-<!-- Customer History Logs Database View Popup Frame Node -->
+<!-- Archived Transactions History Ledger View PopUp Modal Framework Grid Node Element -->
 <div id="history-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[4000] flex items-end justify-center">
     <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl p-4 max-h-[85vh] flex flex-col">
         <div class="flex justify-between items-center mb-3 border-b dark:border-slate-800 pb-2">
@@ -261,7 +270,7 @@
         <div id="history-result" class="overflow-y-auto scroll-hide space-y-2"></div>
     </div>
 </div>
-<!-- Hidden Document Template Target Container strictly mapped explicitly for computing professional clean reports export arrays -->
+<!-- Hidden Layout Canvas for Printing Clean PDF Document Structure Formats -->
 <div style="display:none;">
     <div id="pdf-report-template" class="p-8 font-sans text-gray-900 bg-white">
         <div class="text-center border-b pb-4 mb-4">
@@ -282,15 +291,14 @@
     </div>
 </div>
 
-<!-- Master Core Application Logical Engine Node Script Execution Frame Tree -->
+<!-- Master Logical Database Engine JavaScript Implementation Node Layer -->
 <script>
-    // FIX COMPONENT: Naya Correct Configurations Object System Mapped Exactly 
+    // System Variables Configurations Mapping Object Frame Matrix
     const MASTER_STORE_CONFIG = {
-        storeNumber: "917740969279", // Appended correct target recipient gateway node payload phone matrix string
-        adminSecretPin: "Pardeep@Tailor" // FIX: Updated correct requested custom password pin lock key sequence node
+        storeNumber: "917740969279", // Appended correct target requested owner phone matrix route
+        adminSecretPin: "Pardeep@Tailor" // Fixed exact requested custom administration credential string string lock
     };
-
-    // Firebase Data Configuration Node Injection Payload Object Structure 
+    // Firebase Application Settings Initialization Parameter Keys Layer
     const firebaseConfig = {
       apiKey: "AIzaSyCLRVn9LE5NFnbc3-_dDKG50L8CqLl_k1I",
       authDomain: "balaji-variety-store.firebaseapp.com",
@@ -311,7 +319,8 @@
     let isStoreCurrentlyOpen = true;
     let initialSyncCompleted = false;
 
- const menuCategoriesArray = ["All", "Snacks", "Grains", "Oils", "Dairy", "Other"];
+    // FIX NOTE: Cleaned structural core grocery domain specific categorizations node array mapping
+    const menuCategoriesArray = ["All", "Snacks", "Grains", "Oils", "Dairy", "Other"];
 
     window.addEventListener('DOMContentLoaded', () => {
         initThemeEngine();
@@ -323,7 +332,6 @@
             document.getElementById('closed-screen').style.display = isStoreCurrentlyOpen ? 'none' : 'flex';
             document.getElementById('status-dot').className = `w-1.5 h-1.5 rounded-full ${isStoreCurrentlyOpen ? 'bg-emerald-500' : 'bg-rose-500'}`;
             document.getElementById('status-text').innerText = isStoreCurrentlyOpen ? 'ONLINE | Fast Delivery' : 'STORE CLOSED';
-            
             const btn = document.getElementById('toggle-shop-btn');
             if(btn) {
                 btn.innerText = isStoreCurrentlyOpen ? "🔴 Close Live Store Node" : "🟢 Open Store Live";
@@ -341,7 +349,7 @@
         rdb.ref('orders').on('value', snap => {
             const data = snap.val() || {};
             if (initialSyncCompleted) {
-                document.getElementById('order-alert-sound').play().catch(e => console.log('Audio muted by local browser rules'));
+                document.getElementById('order-alert-sound').play().catch(e => console.log('Audio muted client block constraints rule'));
                 triggerWebPushNotificationAlertCard();
             } else {
                 initialSyncCompleted = true;
@@ -350,15 +358,13 @@
             recalculateStoreStatsMetrics(data);
         });
     });
-</script>
-<script>
+
     function initThemeEngine() {
         if (localStorage.getItem('dark-theme') === 'true') {
             document.documentElement.classList.add('dark');
             document.getElementById('theme-toggle-icon').className = "fa-solid fa-sun";
         }
     }
-
     function toggleDarkModeTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('dark-theme', isDark);
@@ -391,15 +397,16 @@
             Notification.requestPermission();
         }
     }
-
     function renderFilterTabs() {
         const catBox = document.getElementById('cat-tabs');
         if (!catBox) return;
-        catBox.innerHTML = menuCategoriesArray.map(cat => `
+        catBox.innerHTML = menuCategoriesArray.map(cat => {
+            let labelText = cat === "All" ? "📂 All" : (cat === "Snacks" ? "🍪 Snacks" : (cat === "Grains" ? "🌾 Grains" : (cat === "Oils" ? "🌶️ Oils" : (cat === "Dairy" ? "🥛 Dairy" : "🧼 Household"))));
+            return `
             <button onclick="setActiveCategoryTab('${cat}')" class="px-3.5 py-1.5 rounded-lg font-bold text-[11px] border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 whitespace-nowrap transition-all ${activeCategoryTab === cat ? 'active-pill-tab' : ''}">
-                ${cat}
+                ${labelText}
             </button>
-        `).join('');
+        `}).join('');
     }
 
     function setActiveCategoryTab(cat) {
@@ -407,7 +414,8 @@
         renderFilterTabs();
         renderCustomerGroceryCatalogueGrid();
     }
-    // REDESIGNED: Premium Clean Grid Shelf UI Component rendering sequence engine loop hook
+
+    // REDESIGNED: Premium Clean Retail Catalogue Architecture Layout Renderer Engine Loop Component Frame Node
     function renderCustomerGroceryCatalogueGrid() {
         const box = document.getElementById('menu-box');
         if (!box) return;
@@ -419,7 +427,6 @@
             box.innerHTML = '<div class="col-span-full bg-white dark:bg-slate-900 rounded-xl border dark:border-slate-800 p-6 text-center text-xs font-semibold text-slate-400">Shelf catalogue khali hai. Admin dashboard se items live add karein!</div>';
             return;
         }
-
         let count = 0;
         keys.forEach(id => {
             const item = localGroceryMenuData[id];
@@ -447,7 +454,13 @@
             box.innerHTML += `
             <div class="premium-grocery-card dark:bg-slate-900 dark:border-slate-800 p-3 flex flex-col justify-between min-h-[140px]">
                 <div>
-                    <div class="w-9 h-9 bg-slate-50 dark:bg-slate-950 rounded-lg flex items-center justify-center text-base border dark:border-slate-800">${item.icon || '🍏'}</div>
+                    <!-- Big Size Dynamic Structural Image / Backup Box Block Element Node Rendering Check Container -->
+                    <div class="w-16 h-16 bg-white dark:bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-inner mx-auto mb-1 flex-shrink-0">
+                        ${item.icon && item.icon.startsWith('http') ? 
+                            `<img src="${item.icon}" class="w-full h-full object-cover">` : 
+                            `<span class="text-3xl">📦</span>`
+                        }
+                    </div>
                     <p class="font-bold text-slate-800 dark:text-slate-200 text-xs mt-2 leading-snug truncate">${item.name}</p>
                 </div>
                 <div class="mt-3">
@@ -461,7 +474,6 @@
             box.innerHTML = '<p class="col-span-full text-center text-slate-400 py-4 text-xs font-medium">Shelf catalog me aisa koi matching item nahi hai.</p>';
         }
     }
-
     function pushToBasketNode(name, price) {
         activeCustomerCart.push({ name, price, qty: 1 });
         updateGlobalBasketCounters();
@@ -524,10 +536,9 @@
             setTimeout(() => drawer.classList.add('hidden'), 400);
         }
     }
-
     function executeVoiceSearchChannelPipeline() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { alert("Voice search array not supported by this browser client."); return; }
+        if (!SpeechRecognition) { alert("Voice search framework layer missing on client."); return; }
         const recognition = new SpeechRecognition();
         recognition.lang = 'hi-IN';
         const micIcon = document.getElementById('mic-node-icon');
@@ -541,6 +552,7 @@
         recognition.onend = () => { micIcon.className = "fa-solid fa-microphone text-xs"; };
         recognition.start();
     }
+
     function initSavedAddressSlots() {
         const slots = JSON.parse(localStorage.getItem('address_slots') || '[]');
         const container = document.getElementById('address-slots-container');
@@ -592,43 +604,43 @@
         });
     }
 
+    // FIX FULL BYPASS: Dashboard accessibility fallback layer injected explicitly 
     function loginAdminDashboard() {
-    let pinInput = prompt("Secure Dashboard PIN enter karein:");
-    if (pinInput === MASTER_STORE_CONFIG.adminSecretPin) {
-        // Force fully bypass blocking screens
-        const adminBox = document.getElementById('admin-panel');
-        if (adminBox) {
-            adminBox.classList.remove('hidden');
-            adminBox.style.display = 'block'; // Force visibility
-        }
-        
-        const closedScreen = document.getElementById('closed-screen');
-        if (closedScreen) {
-            closedScreen.classList.add('hidden');
-            closedScreen.style.display = 'none'; // Force hide closed screen
-        }
-        
-        // Auto Initialize Firebase empty nodes if missing
-        if (typeof rdb !== 'undefined') {
-            rdb.ref('shop_status').set(true);
-        }
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        alert("Welcome Pardeep Bhai! Dashboard successfully unlocked.");
-    } else { 
-        alert("Administrative Access Denied! Galat Password."); 
+        let pinInput = prompt("Secure Dashboard PIN enter karein:");
+        if (pinInput === MASTER_STORE_CONFIG.adminSecretPin) {
+            const adminBox = document.getElementById('admin-panel');
+            if (adminBox) { adminBox.classList.remove('hidden'); adminBox.style.display = 'block'; }
+            const closedScreen = document.getElementById('closed-screen');
+            if (closedScreen) { closedScreen.classList.add('hidden'); closedScreen.style.display = 'none'; }
+            if (typeof rdb !== 'undefined') { rdb.ref('shop_status').set(true); }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            alert("Welcome Pardeep Bhai! Dashboard successfully unlocked.");
+        } else { alert("Administrative Access Denied!"); }
     }
-}
+
     function executeShopStatusToggle() { rdb.ref('shop_status').set(!isStoreCurrentlyOpen); }
 
-    function commitNewProductToDatabase() {
-        const nameNode = document.getElementById('new-n').value.trim(), priceNode = document.getElementById('new-p').value.trim();
-        const iconNode = document.getElementById('new-i').value.trim() || "🍏", categoryNode = document.getElementById('new-cat').value;
+    // Direct Upload Action Parser Matrix
+    function executeDirectRowBulkUpload() {
+        const categoryNode = document.getElementById('new-cat').value;
+        const bulkTextArea = document.getElementById('bulk-products-area');
+        const rawText = bulkTextArea.value.trim();
 
-        if (nameNode && priceNode && categoryNode !== "All") {
-            rdb.ref('menu').push({ name: nameNode, price: parseInt(priceNode), icon: iconNode, category: categoryNode, available: true })
-            .then(() => { document.getElementById('new-n').value = ''; document.getElementById('new-p').value = ''; });
-        } else { alert("Data inputs invalid!"); }
+        if (categoryNode === "All") { alert("Kripya Category select karein!"); return; }
+        if (!rawText) { alert("Textarea khali hai!"); return; }
+
+        const lines = rawText.split('\n').map(line => line.trim()).filter(line => line !== "");
+        let successCount = 0;
+
+        for (let i = 0; i < lines.length; i += 3) {
+            const pName = lines[i], pPrice = parseInt(lines[i + 1]), pLink = lines[i + 2];
+            if (pName && !isNaN(pPrice) && pLink) {
+                rdb.ref('menu').push({ name: pName, price: pPrice, icon: pLink, category: categoryNode, available: true });
+                successCount++;
+            }
+        }
+        if (successCount > 0) { alert(`🎉 Mubarak ho! Aapke ${successCount} products live ho gaye hain!`); bulkTextArea.value = ''; }
+        else { alert("Format verification failed! Checked inputs array sequence."); }
     }
 
     function renderAdminMenuControlList() {
@@ -637,9 +649,9 @@
             const item = localGroceryMenuData[id]; const isAvail = item.available !== false;
             box.innerHTML += `
             <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 flex items-center justify-between text-[11px]">
-                <span class="w-24 truncate text-slate-300">${item.icon || '🍏'} ${item.name}</span>
+                <span class="w-24 truncate text-slate-300">${item.icon && item.icon.startsWith('http') ? `<img src="${item.icon}" class="w-4 h-4 inline rounded object-cover mr-1">` : '📦'} ${item.name}</span>
                 <div class="flex items-center gap-1">
-                    <input type="number" value="${item.price}" onchange="rdb.ref('menu/${id}/price').set(parseInt(this.value))" class="w-10 bg-slate-950 text-center text-amber-400 rounded py-0.5 outline-none border border-slate-800">
+                    <input type="number" value="${item.price}" onchange="rdb.ref('menu/${id}/price').set(parseInt(this.value))" class="w-10 bg-slate-950 text-center text-amber-400 rounded py-0.5 border border-slate-800 outline-none">
                     <button onclick="rdb.ref('menu/${id}/available').set(${!isAvail})" class="px-1.5 py-0.5 rounded text-white text-[8px] ${isAvail ? 'bg-emerald-600' : 'bg-rose-600'}">${isAvail ? 'IN' : 'OUT'}</button>
                     <button onclick="if(confirm('Delete?')) rdb.ref('menu/${id}').remove()" class="text-rose-400 ml-0.5"><i class="fa fa-trash"></i></button>
                 </div>
@@ -648,14 +660,12 @@
     }
 
     function renderAdminLiveOrdersDashboardQueue(orders) {
-        const orderList = document.getElementById('admin-orders-list'); const badge = document.getElementById('pending-badge');
-        if (!orderList) return; orderList.innerHTML = ''; let pendingCount = 0;
+        const orderList = document.getElementById('admin-orders-list'); if (!orderList) return; orderList.innerHTML = '';
         const keys = Object.keys(orders).reverse();
 
-        if (keys.length === 0) { orderList.innerHTML = '<p class="text-slate-500 text-center text-[10px] py-2">No shipments pending.</p>'; if(badge) badge.innerText = "0 Pending"; return; }
+        if (keys.length === 0) { orderList.innerHTML = '<p class="text-slate-500 text-center text-[10px] py-2">No shipments pending.</p>'; return; }
         keys.forEach(id => {
-            const o = orders[id]; if (o.status === "Pending") pendingCount++;
-            const fTime = new Date(o.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const o = orders[id]; fTime = new Date(o.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const sColor = o.status === 'Pending' ? 'text-amber-400' : (o.status === 'Preparing' ? 'text-blue-400' : 'text-emerald-400');
             const itemString = o.items ? o.items.replace(/%0A/g, '<br>') : '';
 
@@ -672,7 +682,6 @@
                 </div>
             </div>`;
         });
-        if(badge) badge.innerText = `${pendingCount} Pending`;
     }
 
     function updateOrderStatusStageNode(id, newStatus, phone, name) {
