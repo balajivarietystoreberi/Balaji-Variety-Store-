@@ -1,758 +1,688 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balaji Variety Store - Next-Gen Grocery</title>
-    
-    <!-- Tailwind UI Framework & Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <title>Balaji Variety Store | Premium Omnichannel Hyperlocal Engine</title>
+<script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Firebase Core App & Realtime Database Legacy SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <!-- HTML2PDF Engine -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <script>
+    <audio id="order-alert-sound" src="https://notification-sounds.com/audio/Notification-sounds-electronic-chime.mp3" preload="auto" loop></audio>
+<script>
         tailwind.config = {
             darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        store: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 
+                            500: '#22c55e', 600: '#16a34a', 700: '#15803d', 950: '#052e16'
+                        }
+                    },
+                    animation: { 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
+                }
+            }
         }
     </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s; }
-        
-        /* Blinkit Style Premium Grocery Shelf Cards */
-        .premium-grocery-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .premium-grocery-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(16, 185, 129, 0.08); border-color: #a7f3d0; }
-        
-        /* Modern Bottom Slide Drawer instead of outdated sheets */
-        .modern-drawer { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-radius: 24px 24px 0 0; transform: translateY(110%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); z-index: 100; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
-        .modern-drawer.active { transform: translateY(0); }
-        
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; transition: background-color 0.3s ease; }
+        .dark body { background-color: #020617; }
         .scroll-hide::-webkit-scrollbar { display: none; }
-        .active-pill-tab { background: #059669 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .product-card-scale { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card-scale:hover { transform: translateY(-4px); }
+        @keyframes subtle-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton-loader { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: subtle-shimmer 1.5s infinite; }
+        .dark .skeleton-loader { background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-gray-100 pb-32">
-
-<!-- Audio Element Layer Node for Incoming Alert Chimes -->
-<audio id="order-alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav" preload="auto"></audio>
-
-<!-- Smart PWA App Installation Module Banner -->
-<div id="pwa-prompt" class="hidden fixed top-4 inset-x-4 max-w-sm mx-auto bg-slate-900 dark:bg-emerald-900 text-white p-3 rounded-xl shadow-2xl z-[9000] flex justify-between items-center border border-slate-800">
-    <div class="flex items-center gap-2">
-        <span class="text-lg">🛍️</span>
-        <div>
-            <p class="text-xs font-bold">App Install Karein</p>
-            <p class="text-[10px] opacity-80">Ek click me direct order lgao</p>
-        </div>
-    </div>
-    <button id="btn-pwa-install" class="bg-emerald-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase">Get App</button>
-</div>
-<!-- Secure Shop Closed Barrier Layer Drop -->
-<div id="closed-screen" class="hidden fixed inset-0 bg-slate-50 dark:bg-slate-950 z-[5000] flex flex-col items-center justify-center p-6 text-center">
-    <div class="w-16 h-16 bg-rose-50 text-rose-500 dark:bg-rose-950/30 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-inner">🔒</div>
-    <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-200">Dukan Abhi Band Hai</h2>
-    <p class="text-xs text-slate-400 mt-1">Balaji Variety Store par aapka swagat hai, kripya khulne ka intezaar karein.</p>
-    <button onclick="loginAdminDashboard()" class="mt-6 px-5 py-2 bg-slate-200 dark:bg-slate-900 border dark:border-slate-800 rounded-lg text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-800 transition-colors">Owner Login</button>
-</div>
-
-<!-- Premium Minimal E-Commerce Top Header Navigation -->
-<header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 py-3 flex justify-between items-center shadow-sm">
-    <div class="flex items-center gap-2.5">
-        <!-- Big Size Optimized Rounded Image Logo Container Bracket -->
-        <div class="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700 shadow-md flex items-center justify-center bg-white flex-shrink-0">
-            <img src="https://i.ibb.co/G48gWPYQ/1778990954256.png" alt="Balaji Variety Store Logo" class="w-full h-full object-cover">
-        </div>
-        <div>
-            <h1 class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white leading-tight">Balaji Variety Store</h1>
-            <div class="flex items-center gap-1.5 mt-0.5 text-[10px] font-bold text-slate-400 dark:text-slate-500">
-                <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                <span id="status-text">Connecting...</span>
-                <span>| Badi beri</span>
+<body class="text-slate-900 dark:text-slate-100 antialiased selection:bg-store-500 selection:text-white">
+<div class="max-w-md mx-auto min-h-screen flex flex-col bg-white dark:bg-slate-900 shadow-2xl relative overflow-x-hidden border-x border-slate-100 dark:border-slate-800/50">
+        <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80 px-4 py-3 flex items-center justify-between transition-colors">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-store-500 to-emerald-600 flex items-center justify-center shadow-md shadow-store-500/20">
+                    <i class="fa-solid fa-shop text-white text-base"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Balaji Variety Store</h1>
+                    <p class="text-[10px] text-store-600 dark:text-store-400 font-bold tracking-wider uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-store-500 animate-ping"></span> Live Instant Fulfilment
+                    </p>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="flex items-center gap-1">
-        <button onclick="toggleDarkModeTheme()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid fa-moon" id="theme-toggle-icon"></i></button>
-        <button onclick="openTrackerModal()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid fa-truck-fast"></i></button>
-        <button onclick="openHistoryModal()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid fa-history"></i></button>
-        <button onclick="loginAdminDashboard()" class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-shield"></i></button>
-    </div>
-</header>
-
-<div class="max-w-2xl mx-auto px-4 py-4">
-
-    <!-- Administrative Master Workspace Dashboard Panel Control Layout -->
-    <div id="admin-panel" class="hidden bg-slate-900 rounded-2xl shadow-xl p-5 mb-6 text-white border border-slate-800">
-        <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2.5">
-            <h2 class="text-xs font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> Store Admin Panel</h2>
-            <div class="flex items-center gap-1.5">
-                <button onclick="triggerDailySalesPDFReport()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase tracking-wider"><i class="fa-solid fa-file-export mr-1"></i> PDF Report</button>
-                <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleGlobalThemeEngineState()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:scale-95 active:scale-90 transition-transform">
+                    <i id="theme-toggle-icon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button onclick="toggleAdminPanelControlState()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:scale-95 active:scale-90 transition-transform">
+                    <i class="fa-solid fa-user-shield text-sm"></i>
+                </button>
             </div>
-        </div>
-
-        <button id="toggle-shop-btn" onclick="executeShopStatusToggle()" class="w-full py-2 rounded-lg font-bold mb-4 text-xs tracking-wider uppercase transition-colors">Syncing Status...</button>
-        <div class="grid grid-cols-3 gap-2 mb-4">
-            <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
-                <p id="stat-revenue" class="text-base font-black text-emerald-400">₹0</p>
-                <p class="text-[9px] text-slate-500 font-bold uppercase mt-0.5">Today Total Sales</p>
+        </header>
+        <main class="flex-1 pb-24 overflow-y-auto scroll-hide">
+<div id="customer-live-tracking-node" class="hidden bg-gradient-to-r from-slate-900 to-slate-950 text-white p-4 mx-4 mt-4 rounded-2xl shadow-xl space-y-3 border border-slate-800/80">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-black uppercase tracking-widest text-store-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-truck-fast animate-pulse"></i> Live Order Tracking
+                    </h4>
+                    <span id="tracking-id-label" class="text-[10px] font-mono text-slate-500">ID: -----</span>
+                </div>
+                <div class="grid grid-cols-4 gap-1 relative pt-2">
+                    <div class="absolute top-5 left-6 right-6 h-0.5 bg-slate-800 -z-10"></div>
+                    <div id="step-line-progress" class="absolute top-5 left-6 w-0 h-0.5 bg-store-500 -z-10 transition-all duration-500"></div>
+                    <div class="text-center space-y-1">
+                        <div id="track-step-1" class="w-7 h-7 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-400 font-bold border-2 border-slate-800 transition-colors"><i class="fa-solid fa-receipt"></i></div>
+                        <p class="text-[9px] font-black tracking-tighter text-slate-400" id="track-text-1">Received</p>
+                    </div>
+                    <div class="text-center space-y-1">
+                        <div id="track-step-2" class="w-7 h-7 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-400 font-bold border-2 border-slate-800 transition-colors"><i class="fa-solid fa-box-open"></i></div>
+                        <p class="text-[9px] font-black tracking-tighter text-slate-400" id="track-text-2">Packing</p>
+                    </div>
+                    <div class="text-center space-y-1">
+                        <div id="track-step-3" class="w-7 h-7 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-400 font-bold border-2 border-slate-800 transition-colors"><i class="fa-solid fa-motorcycle"></i></div>
+                        <p class="text-[9px] font-black tracking-tighter text-slate-400" id="track-text-3">OnWay</p>
+                    </div>
+                    <div class="text-center space-y-1">
+                        <div id="track-step-4" class="w-7 h-7 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-400 font-bold border-2 border-slate-800 transition-colors"><i class="fa-solid fa-square-check"></i></div>
+                        <p class="text-[9px] font-black tracking-tighter text-slate-400" id="track-text-4">Delivered</p>
+                    </div>
+                </div>
             </div>
-            <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
-                <p id="stat-orders" class="text-base font-black text-blue-400">0</p>
-                <p class="text-[9px] text-slate-500 font-bold uppercase mt-0.5">Orders Placed</p>
+<div id="admin-panel-overlay" class="hidden bg-slate-950 p-4 border-b border-slate-800 text-slate-200 transition-all duration-300">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-terminal"></i> Store Operational Terminal
+                    </h3>
+                    <button onclick="toggleAdminPanelControlState()" class="text-slate-500 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="admin-auth-container" class="space-y-2">
+                    <input type="password" id="admin-security-key" placeholder="Enter System Admin Password..." class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors">
+                    <button onclick="authenticateOperationalTerminalGate()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-1.5 rounded transition-colors shadow-lg shadow-amber-500/10">Authorize Access Sequence</button>
+                </div>
+<div id="admin-dashboard-console" class="hidden space-y-4">
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-slate-900 p-2 rounded border border-slate-800"><p class="text-[10px] text-slate-400 font-medium">Orders</p><p id="stat-total-orders" class="text-sm font-black text-white">0</p></div>
+                        <div class="bg-slate-900 p-2 rounded border border-slate-800"><p class="text-[10px] text-slate-400 font-medium">Revenue</p><p id="stat-total-revenue" class="text-sm font-black text-emerald-400">₹0</p></div>
+                        <div class="bg-slate-900 p-2 rounded border border-slate-800"><p class="text-[10px] text-slate-400 font-medium">Active Items</p><p id="stat-total-items" class="text-sm font-black text-blue-400">0</p></div>
+                    </div>
+                    <div class="border-t border-slate-800 pt-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="font-bold text-slate-300 text-xs flex items-center gap-1">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span> Live Orders Queue (Instant Sync Active)
+                            </p>
+                            <button onclick="activateNotificationSoundEngine(this)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[9px] px-2 py-1 rounded shadow-md uppercase tracking-wider flex items-center gap-1 animate-pulse">
+                                <i class="fa-solid fa-volume-high"></i> Sound On Karein 🔔
+                            </button>
+                        </div>
+                        <div id="admin-orders-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 scroll-hide"></div>
+                    </div>
+<div class="border-t border-slate-800 pt-3 space-y-2">
+                        <p class="font-bold text-slate-300 text-xs flex items-center gap-1"><i class="fa-solid fa-cloud-arrow-up text-blue-400"></i> Modern Smart Bulk Catalog Upload Engine</p>
+                        <select id="bulk-target-category" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500">
+                            <option value="Groceries & Essentials">Groceries & Essentials</option>
+                            <option value="Snacks & Munchies">Snacks & Munchies</option>
+                            <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
+                            <option value="Personal Care & Hygiene">Personal Care & Hygiene</option>
+                        </select>
+                        <textarea id="bulk-raw-stream-input" rows="5" placeholder="Sofy Bodyfit Pro&#10;45&#10;https://i.ibb.co/ZpDkY7Tg/download-6.webp" class="w-full bg-slate-900 border border-slate-800 rounded p-2 text-xs font-mono text-emerald-400 placeholder:text-slate-600 focus:outline-none focus:border-blue-500"></textarea>
+                        <button onclick="executeBulkCatalogIngestionPipeline()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-1.5 rounded transition-colors shadow-lg shadow-blue-600/20">Ingest Structural Catalog Batch</button>
+                    </div>
+                </div>
             </div>
-            <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
-                <p id="stat-top" class="text-xs font-bold text-amber-400 truncate mt-0.5">-</p>
-                <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Top Selling</p>
+<div class="px-4 pt-4 sticky top-[61px] bg-white dark:bg-slate-900 z-30 pb-2 transition-colors">
+                <div class="relative flex items-center">
+                    <span class="absolute left-3.5 text-slate-400 dark:text-slate-500 text-xs"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" id="global-search-input" oninput="dispatchCatalogSearchFilterPipeline(this.value)" placeholder="Search groceries, essentials, household items..." class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800/80 rounded-2xl pl-9 pr-10 py-3 text-xs focus:outline-none focus:border-store-500 dark:focus:border-store-500 transition-all font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-inner">
+                    <button onclick="invokeSpeechSynthesisRecognitionEngine()" class="absolute right-3 w-7 h-7 rounded-lg bg-white dark:bg-slate-700 shadow-sm border border-slate-100 dark:border-slate-600/50 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-store-500 dark:hover:text-store-400 transition-colors"><i class="fa-solid fa-microphone text-xs"></i></button>
+                </div>
             </div>
-        </div>
-
-        <!-- Direct Row-Wise Bulk Upload Control Panel Structure Element Node -->
-        <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800/80 mb-4">
-            <p class="font-bold text-amber-400 text-[10px] mb-1 uppercase tracking-wider flex items-center gap-1">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Direct Bulk Upload Mode
-            </p>
-            <p class="text-[9px] text-slate-400 mb-3">Niche diye gaye order me line-by-line saare items paste karein:<br>
-                <span class="text-emerald-400">Line 1: Name, Line 2: Price, Line 3: Photo Link</span>
-            </p>
-            <div class="mb-3">
-                <select id="new-cat" class="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-slate-400 mb-2">
-                    <option value="All">📂 Pehle Category Chunein</option>
-                    <option value="Snacks">🍪 Snacks & Biscuits</option>
-                    <option value="Grains">🌾 Daal & Chawal</option>
-                    <option value="Oils">🌶️ Oil & Spices</option>
-                    <option value="Dairy">🥛 Daily Milk & Dairy</option>
-                    <option value="Other">Beauti & Cleaning</option>
-                </select>
-                
-                <textarea id="bulk-products-area" rows="6" placeholder="Fortune Oil&#10;175&#10;https://i.ibb.co/Y7fkZ9Nz/oil.jpg&#10;Tata Salt&#10;28&#10;https://i.ibb.co/Y7fkZ9Nz/salt.jpg" class="w-full p-3 bg-slate-900 border border-slate-800 rounded-xl text-xs outline-none text-white font-mono scroll-hide"></textarea>
+<div class="px-4 py-2">
+                <div id="category-scroller-track" class="flex gap-2 overflow-x-auto scroll-hide py-1">
+                    <button onclick="switchActiveCategoryFilterState('ALL', this)" class="category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-extrabold transition-all bg-gradient-to-r from-store-500 to-emerald-600 text-white shadow-md shadow-store-500/10 scale-100">All Collections</button>
+                    <button onclick="switchActiveCategoryFilterState('Groceries & Essentials', this)" class="category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800/30">Groceries & Essentials</button>
+                    <button onclick="switchActiveCategoryFilterState('Snacks & Munchies', this)" class="category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800/30">Snacks & Munchies</button>
+                    <button onclick="switchActiveCategoryFilterState('Dairy, Bread & Eggs', this)" class="category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800/30">Dairy, Bread & Eggs</button>
+                    <button onclick="switchActiveCategoryFilterState('Personal Care & Hygiene', this)" class="category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800/30">Personal Care & Hygiene</button>
+                </div>
             </div>
-            
-            <button onclick="executeDirectRowBulkUpload()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-lg text-xs tracking-wider uppercase shadow-md">
-                Turant Saare Products Upload Karein 🚀
-            </button>
-            
-            <div id="admin-menu-list" class="space-y-1.5 max-h-40 overflow-y-auto mt-4 pr-1 scroll-hide"></div>
-        </div>
-
-        <!-- Live Orders Dynamic Queue Pipeline Stack Node View -->
-        <div class="border-t border-slate-800 pt-3">
-            <p class="font-bold text-slate-300 text-xs mb-2 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Grocery Shipments Queue</p>
-            <div id="admin-orders-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 scroll-hide"></div>
-        </div>
-    </div>
-    <!-- Unified Search Component UI Field Wrapper Node with Voice Engine Hooks -->
-    <div class="relative mb-5 flex gap-2">
-        <div class="relative flex-1">
-            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input id="search-input" oninput="renderCustomerGroceryCatalogueGrid()" placeholder="Aata, Daal, Chawal ya kuch bhi dhoondhein..." class="w-full py-3 pl-10 pr-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-xs shadow-sm outline-none focus:border-emerald-500 transition-colors">
-            <button onclick="executeVoiceSearchChannelPipeline()" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-slate-50 dark:bg-slate-800 border text-slate-400 rounded-lg flex items-center justify-center hover:text-emerald-500"><i class="fa-solid fa-microphone text-xs" id="mic-node-icon"></i></button>
-        </div>
-    </div>
-
-    <!-- Category Pill Filter Layout Horizontal Rail -->
-    <div id="cat-tabs" class="flex gap-1.5 overflow-x-auto pb-2 mb-5 scroll-hide"></div>
-
-    <!-- Primary Catalog Shelf Display Frame -->
-    <div class="flex justify-between items-center mb-4 border-b border-slate-200/60 dark:border-slate-800/80 pb-2">
-        <h2 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">E-Commerce Shelf Catalogue</h2>
-    </div>
-    <div id="menu-box" class="grid grid-cols-2 gap-3"></div>
-</div>
-<!-- Redesigned Minimal Floating Pill Basket Notification Controller Hook Link -->
-<div id="floating-cart" class="fixed bottom-6 right-4 left-4 max-w-sm mx-auto z-40 transition-all duration-300 translate-y-36">
-    <div onclick="toggleCheckoutDrawerState(true)" class="bg-slate-900 dark:bg-emerald-600 p-3.5 rounded-xl shadow-2xl flex justify-between items-center text-white cursor-pointer hover:opacity-95">
-        <div class="flex items-center gap-2.5">
-            <i class="fa-solid fa-basket-shopping text-emerald-400 dark:text-white"></i>
-            <div>
-                <p id="float-items" class="text-[9px] font-bold uppercase tracking-wider opacity-75">0 Items</p>
-                <p id="float-total" class="text-sm font-extrabold leading-none mt-0.5">₹0</p>
+<div class="px-4 py-2">
+                <div id="catalog-dynamic-grid-viewport" class="grid grid-cols-2 gap-3">
+                    <div class="h-48 rounded-2xl skeleton-loader"></div>
+                    <div class="h-48 rounded-2xl skeleton-loader"></div>
+                    <div class="h-48 rounded-2xl skeleton-loader"></div>
+                    <div class="h-48 rounded-2xl skeleton-loader"></div>
+                </div>
             </div>
-        </div>
-        <span class="text-[10px] font-bold bg-white/10 px-2.5 py-1.5 rounded-md uppercase tracking-wider">Review Basket <i class="fa-solid fa-arrow-right ml-0.5 text-[8px]"></i></span>
-    </div>
-</div>
-
-<!-- Premium Slide-up Navigation Modal Basket Drawer System Frame Component Layout Layer -->
-<div id="checkout-sheet" class="modern-drawer max-w-2xl mx-auto dark:bg-slate-900 border border-t-slate-200 dark:border-slate-800">
-    <div class="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/40 rounded-t-3xl">
-        <h3 class="font-extrabold text-sm text-slate-800 dark:text-slate-200">Review Basket Summary</h3>
-        <button onclick="toggleCheckoutDrawerState(false)" class="w-7 h-7 bg-white dark:bg-slate-800 border dark:border-slate-700 text-gray-400 rounded-full flex items-center justify-center shadow-sm"><i class="fa-solid fa-xmark text-xs"></i></button>
-    </div>
-    <div class="p-4 overflow-y-auto space-y-4 max-h-[75vh] scroll-hide">
-        <div class="bg-slate-50 dark:bg-slate-950/40 p-3 rounded-xl border dark:border-slate-800">
-            <div id="cart-summary" class="space-y-2 mb-2.5 max-h-36 overflow-y-auto scroll-hide"></div>
-            <div class="flex justify-between items-center border-t dark:border-slate-800 pt-2 font-bold text-xs text-slate-400 uppercase tracking-wider">
-                <span>Total Items Bill</span>
-                <span id="sheet-total" class="text-emerald-600 dark:text-emerald-400 text-base font-black">₹0</span>
+        </main>
+<div id="cart-drawer-dock" class="absolute bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800/80 shadow-2xl rounded-t-3xl transform translate-y-full transition-transform duration-300 ease-out flex flex-col max-h-[85vh]">
+            <div class="px-5 py-4 border-b border-slate-50 dark:border-slate-800/50 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20 rounded-t-3xl">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-store-50 dark:bg-store-950 flex items-center justify-center text-store-600 dark:text-store-400 text-xs font-bold"><i class="fa-solid fa-basket-shopping"></i></span>
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Review Selected Basket</h2>
+                </div>
+                <button onclick="toggleCartDrawerDockView()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs hover:scale-95 transition-transform"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="cart-items-stack-viewport" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-[150px] max-h-[40vh] scroll-hide"></div>
+<div class="p-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800/60 space-y-3">
+                <div class="space-y-2">
+                    <label class="block text-[10px] uppercase font-black tracking-wider text-slate-400 dark:text-slate-500">Consignee Delivery Coordinates</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="customer-identity-node" placeholder="Full Name..." class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-store-500 transition-colors">
+                        <input type="tel" id="customer-telephony-node" placeholder="WhatsApp No..." class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-store-500 transition-colors">
+                    </div>
+                    <input type="text" id="customer-address-node" placeholder="Complete Street Address & Landmark..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-store-500 transition-colors">
+                </div>
+<div class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400 pt-1">
+                    <div class="flex justify-between"><span>Basket Value Subtotal</span><span id="summary-subtotal" class="font-bold text-slate-900 dark:text-slate-200">₹0</span></div>
+                    <div class="flex justify-between text-store-600 dark:text-store-400"><span>Hyperlocal Delivery Charge</span><span class="font-black uppercase tracking-wider text-[10px] bg-store-50 dark:bg-store-950 px-1.5 py-0.5 rounded text-store-600">FREE</span></div>
+                    <div class="flex justify-between text-sm text-slate-900 dark:text-white font-extrabold pt-2 border-t border-dashed border-slate-200 dark:border-slate-700"><span>Gross Payable Amount</span><span id="summary-gross-payable" class="text-store-600 dark:text-store-400 text-base font-black">₹0</span></div>
+                </div>
+                <button onclick="commitOrderCheckoutTransactionPipeline()" class="w-full bg-gradient-to-r from-store-500 to-emerald-600 hover:from-store-600 hover:to-emerald-700 text-white font-black text-xs py-3 rounded-xl transition-all shadow-md shadow-store-500/20 uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Dispatch Order Request
+                </button>
             </div>
         </div>
 
-        <!-- Saved Locations Storage Array Mapping Node Block -->
-        <div>
-            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Saved Delivery Locations</p>
-            <div id="address-slots-container" class="flex gap-1.5 overflow-x-auto pb-1 scroll-hide"></div>
-        </div>
-
-        <!-- Customer Core Logistics Billing Form Matrix Layer Fields Parameters Input -->
-        <div class="space-y-2">
-            <input id="u-n" placeholder="Customer Full Name *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
-            <input id="u-p" type="tel" placeholder="Mobile Number *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
-            <div class="relative">
-                <input id="u-a" placeholder="Complete Home Delivery Address *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
-                <button onclick="commitNewLocationSlotToStorage()" type="button" class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 border dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-[8px] px-2 py-1 rounded uppercase">Save Slot</button>
+        <footer id="floating-cart-anchor" class="absolute bottom-4 left-4 right-4 z-30 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-store-600 dark:to-emerald-700 text-white px-4 py-3 rounded-2xl shadow-xl shadow-slate-950/20 flex items-center justify-between transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-sm relative">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="floating-cart-qty-badge" class="absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 font-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center border border-slate-900 dark:border-store-600">0</span>
+                </div>
+                <div>
+                    <p id="floating-cart-item-desc" class="text-[10px] text-slate-300 dark:text-emerald-100 font-medium">0 items selected</p>
+                    <p id="floating-cart-total-value" class="text-xs font-black text-amber-400 dark:text-white">₹0</p>
+                </div>
             </div>
-
-            <div class="grid grid-cols-2 gap-2">
-                <select id="u-t" class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-semibold text-xs text-slate-500 dark:text-slate-400 outline-none">
-                    <option>15 मिनट में</option>
-                    <option>30 मिनट में</option>
-                    <option>45 मिनट में</option>
-                    <option>On The Shop</option>
-                </select>
-                <select id="u-pay" class="p-2.5 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-400 rounded-lg font-bold text-xs outline-none">
-                    <option value="COD">💵 Cash on Delivery (COD)</option>
-                    <option value="PAID">📱 QR Code (Online Pay)</option>
-                </select>
-            </div>
-        </div>
+            <button onclick="toggleCartDrawerDockView()" class="bg-white text-slate-950 dark:bg-slate-900 dark:text-white font-extrabold text-[11px] px-3.5 py-2 rounded-xl shadow-md uppercase tracking-wider pointer-events-auto hover:scale-95 active:scale-90 transition-transform flex items-center gap-1.5">View Basket <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+        </footer>
     </div>
-    <div class="p-4 bg-white dark:bg-slate-900 border-t dark:border-slate-800">
-        <button onclick="evaluateCheckoutGatewayPipeline()" class="w-full bg-emerald-600 text-white font-extrabold py-3 rounded-lg text-xs tracking-wider uppercase shadow-md">Confirm Grocery Dispatch Order 🚀</button>
-    </div>
-</div>
-<!-- Modern Payment UPI Merchant QR Code Popup Modal Window System Component Layer -->
-<div id="qr-modal" class="hidden fixed inset-0 bg-slate-950/90 z-[6000] flex items-center justify-center p-5 text-center backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 max-w-xs w-full shadow-2xl border dark:border-slate-800">
-        <h3 class="font-extrabold text-sm text-slate-800 dark:text-white tracking-tight uppercase">UPI Merchant Checkout Gate</h3>
-        <p class="text-[9px] text-slate-400 font-bold mb-3">Scan code using any UPI App to process transaction</p>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            databaseURL: "https://grocerryapp-da7bf-default-rtdb.firebaseio.com/"
+        };
         
-        <!-- FIX: Absolute Core Original Secure Target Payment Image Node Link Array Built In Exactly -->
-        <img src="https://i.ibb.co/Y7fkZ9Nz/IMG-20260517-WA0000.jpg" class="w-full rounded-xl border dark:border-slate-800 mb-4 p-0.5 bg-white shadow-inner" alt="Balaji Variety Store Final Genuine UPI QR">
-        
-        <button onclick="writeOrderPayloadToFirebaseRTDB('PAID')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wide uppercase">✅ Payment Completed Done</button>
-        <button onclick="document.getElementById('qr-modal').classList.add('hidden')" class="text-slate-400 font-bold text-[9px] uppercase tracking-widest mt-3 block mx-auto hover:text-gray-600">Cancel Payment</button>
-    </div>
-</div>
+        firebase.initializeApp(firebaseConfig);
+        const rdb = firebase.database();
 
-<!-- Realtime Delivery Shipment Status Pipeline Tracking System Interface Frame -->
-<div id="tracker-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[4000] flex items-end justify-center">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl p-4 max-h-[85vh] flex flex-col">
-        <div class="flex justify-between items-center mb-3 border-b dark:border-slate-800 pb-2">
-            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-route text-emerald-600"></i> Track Grocery Order Progress</h3>
-            <button onclick="closeGlobalModalContainer('tracker-modal')" class="w-7 h-7 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
-        </div>
-        <div class="flex gap-1.5 mb-4">
-            <input id="track-phone" type="tel" placeholder="Enter registered phone number to track" class="flex-1 p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none text-slate-800 dark:text-white">
-            <button onclick="executeOrderTrackingSyncEngine()" class="px-4 bg-emerald-600 text-white font-bold rounded-lg text-xs uppercase tracking-wide">Sync</button>
-        </div>
-        <div id="track-result" class="overflow-y-auto scroll-hide space-y-3"></div>
-    </div>
-</div>
+        let globalCatalogDataCache = {};
+        let transactionalCartStateMap = {};
+        let activeCategoryFilterContext = "ALL";
+        let initialSyncCompleted = false;
+        let lastPlacedOrderId = null;
+// ==========================================
+// PART 17: Audio Node Restrictions Overrides & Security Permissions Bypasses
+// ==========================================
+        let lastKnownOrdersCount = 0;
+        let isSoundEngineActivated = false;
 
-<!-- Archived Transactions History Ledger View PopUp Modal Framework Grid Node Element -->
-<div id="history-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[4000] flex items-end justify-center">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl p-4 max-h-[85vh] flex flex-col">
-        <div class="flex justify-between items-center mb-3 border-b dark:border-slate-800 pb-2">
-            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-receipt text-indigo-500"></i> Completed Transactions Log</h3>
-            <button onclick="closeGlobalModalContainer('history-modal')" class="w-7 h-7 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
-        </div>
-        <div class="flex gap-1.5 mb-4">
-            <input id="history-phone" type="tel" placeholder="Enter phone number to fetch historic data" class="flex-1 p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none text-slate-800 dark:text-white">
-            <button onclick="fetchCompletedUserHistoryLogs()" class="px-4 bg-indigo-600 text-white font-bold rounded-lg text-xs uppercase tracking-wide">Fetch</button>
-        </div>
-        <div id="history-result" class="overflow-y-auto scroll-hide space-y-2"></div>
-    </div>
-</div>
-<!-- Hidden Layout Canvas for Printing Clean PDF Document Structure Formats -->
-<div style="display:none;">
-    <div id="pdf-report-template" class="p-8 font-sans text-gray-900 bg-white">
-        <div class="text-center border-b pb-4 mb-4">
-            <h1 class="text-xl font-extrabold uppercase tracking-tight">Balaji Variety Store</h1>
-            <p class="text-[11px] text-gray-500">Daily Sales Ledger Report Summary Sheet</p>
-            <p class="text-[9px] text-gray-400 mt-0.5 uppercase">Generated Matrix Sequence: <span id="pdf-timestamp"></span></p>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-5 bg-gray-50 p-4 rounded-xl text-xs">
-            <div><p class="font-bold text-gray-400 uppercase tracking-wide text-[9px]">Gross Completed Sales:</p><p id="pdf-rev-node" class="text-base font-black text-emerald-600">₹0</p></div>
-            <div><p class="font-bold text-gray-400 uppercase tracking-wide text-[9px]">Gross Transactions Volume:</p><p id="pdf-count-node" class="text-base font-black text-blue-600">0</p></div>
-        </div>
-        <table class="w-full text-left text-[11px] border-collapse">
-            <thead>
-                <tr class="bg-gray-100 text-gray-600 uppercase text-[8px] tracking-wider border-b"><th class="p-2">Customer</th><th class="p-2">Mobile Number</th><th class="p-2">Items Matrix Description</th><th class="p-2">Gross Total</th></tr>
-            </thead>
-            <tbody id="pdf-table-body" class="divide-y"></tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Master Logical Database Engine JavaScript Implementation Node Layer -->
-<script>
-    // System Variables Configurations Mapping Object Frame Matrix
-    const MASTER_STORE_CONFIG = {
-        storeNumber: "917740969279", // Appended correct target requested owner phone matrix route
-        adminSecretPin: "Pardeep@Tailor" // Fixed exact requested custom administration credential string string lock
-    };
-    // Firebase Application Settings Initialization Parameter Keys Layer
-    const firebaseConfig = {
-      apiKey: "AIzaSyCLRVn9LE5NFnbc3-_dDKG50L8CqLl_k1I",
-      authDomain: "balaji-variety-store.firebaseapp.com",
-      databaseURL: "https://balaji-variety-store-default-rtdb.firebaseio.com",
-      projectId: "balaji-variety-store",
-      storageBucket: "balaji-variety-store.firebasestorage.app",
-      messagingSenderId: "721618072371",
-      appId: "1:721618072371:web:a8018fe57c01aa376a4446",
-      measurementId: "G-LH8HWX0RFB"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const rdb = firebase.database();
-
-    let localGroceryMenuData = {};
-    let activeCustomerCart = [];
-    let activeCategoryTab = "All";
-    let isStoreCurrentlyOpen = true;
-    let initialSyncCompleted = false;
-
-    // FIX NOTE: Cleaned structural core grocery domain specific categorizations node array mapping
-    const menuCategoriesArray = ["All", "Snacks", "Grains", "Oils", "Dairy", "Other"];
-
-    window.addEventListener('DOMContentLoaded', () => {
-        initThemeEngine();
-        initPWAInstallationPromptEngine();
-        initSavedAddressSlots();
-        
-        rdb.ref('shop_status').on('value', snap => {
-            isStoreCurrentlyOpen = (snap.val() !== false);
-            document.getElementById('closed-screen').style.display = isStoreCurrentlyOpen ? 'none' : 'flex';
-            document.getElementById('status-dot').className = `w-1.5 h-1.5 rounded-full ${isStoreCurrentlyOpen ? 'bg-emerald-500' : 'bg-rose-500'}`;
-            document.getElementById('status-text').innerText = isStoreCurrentlyOpen ? 'ONLINE | Fast Delivery' : 'STORE CLOSED';
-            const btn = document.getElementById('toggle-shop-btn');
-            if(btn) {
-                btn.innerText = isStoreCurrentlyOpen ? "🔴 Close Live Store Node" : "🟢 Open Store Live";
-                btn.className = isStoreCurrentlyOpen ? "w-full py-2 rounded-lg font-bold bg-rose-600 text-white text-xs uppercase shadow-sm" : "w-full py-2 rounded-lg font-bold bg-emerald-600 text-white text-xs uppercase shadow-sm";
-            }
+        function activateNotificationSoundEngine(btnElement) {
+            const soundTrack = document.getElementById('order-alert-sound');
+            soundTrack.play().then(() => {
+                soundTrack.pause();
+                soundTrack.currentTime = 0;
+                isSoundEngineActivated = true;
+                btnElement.innerText = "🔔 Sound Active Hai";
+                btnElement.className = "bg-emerald-600 text-white font-black text-[9px] px-2 py-1 rounded shadow-md uppercase tracking-wider flex items-center gap-1";
+                alert("Notification Alarm active ho gaya hai Pardeep Bhai!");
+            }).catch(err => {
+                alert("Sound allow nahi hua, kripya dobara click karein.");
+            });
+        }
+// ==========================================
+// PART 18: Realtime Storage Pipeline Observers - Products & Instant Sync Ingestion
+// ==========================================
+        rdb.ref('products').on('value', snap => {
+            globalCatalogDataCache = snap.val() || {};
+            rebuildCatalogViewGridInterface(globalCatalogDataCache);
+            recalculateStoreStatsMetrics();
         });
 
-        rdb.ref('menu').on('value', snap => {
-            localGroceryMenuData = snap.val() || {};
-            renderFilterTabs();
-            renderCustomerGroceryCatalogueGrid();
-            renderAdminMenuControlList();
-        });
-
+        // FIXED REAL-TIME AUTOMATIC RENDER: Realtime syncing loop triggered instantly
         rdb.ref('orders').on('value', snap => {
             const data = snap.val() || {};
+            const currentOrdersCount = Object.keys(data).length;
+            
+            // Auto re-renders the DOM elements instantly without requiring pull/refresh sequences
+            renderAdminLiveOrdersDashboardQueue(data);
+            recalculateStoreStatsMetrics(data);
+
+            if (lastPlacedOrderId && data[lastPlacedOrderId]) {
+                updateLiveTrackingVisualSteps(data[lastPlacedOrderId].status);
+            }
+
             if (initialSyncCompleted) {
-                document.getElementById('order-alert-sound').play().catch(e => console.log('Audio muted client block constraints rule'));
-                triggerWebPushNotificationAlertCard();
+                if (currentOrdersCount > lastKnownOrdersCount) {
+                    triggerLoudOrderAlertChimeLoop();
+                }
             } else {
                 initialSyncCompleted = true;
             }
-            renderAdminLiveOrdersDashboardQueue(data);
-            recalculateStoreStatsMetrics(data);
+            lastKnownOrdersCount = currentOrdersCount;
         });
-    });
-
-    function initThemeEngine() {
-        if (localStorage.getItem('dark-theme') === 'true') {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-toggle-icon').className = "fa-solid fa-sun";
-        }
-    }
-    function toggleDarkModeTheme() {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('dark-theme', isDark);
-        document.getElementById('theme-toggle-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
-    }
-
-    let deferredPWAInstallPrompt;
-    function initPWAInstallationPromptEngine() {
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPWAInstallPrompt = e;
-            document.getElementById('pwa-prompt').classList.remove('hidden');
-        });
-        document.getElementById('btn-pwa-install').addEventListener('click', () => {
-            if (deferredPWAInstallPrompt) {
-                deferredPWAInstallPrompt.prompt();
-                deferredPWAInstallPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        document.getElementById('pwa-prompt').remove();
-                    }
+// ==========================================
+// PART 19: Alarm Loop Ingestion Handlers & Audio Drivers
+// ==========================================
+        function triggerLoudOrderAlertChimeLoop() {
+            const alarmSound = document.getElementById('order-alert-sound');
+            if (alarmSound) {
+                alarmSound.play().catch(e => {
+                    console.log("Auto-play blocked! Click 'Sound On Karein' button in admin panel.");
                 });
             }
-        });
-    }
-
-    function triggerWebPushNotificationAlertCard() {
-        if (Notification.permission === "granted") {
-            new Notification("Balaji Variety Store", { body: "🚨 Naya grocery order aaya hai! Check admin control panel.", icon: "🛒" });
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission();
+            triggerWebPushNotificationAlertCard();
         }
-    }
-    function renderFilterTabs() {
-        const catBox = document.getElementById('cat-tabs');
-        if (!catBox) return;
-        catBox.innerHTML = menuCategoriesArray.map(cat => {
-            let labelText = cat === "All" ? "📂 All" : (cat === "Snacks" ? "🍪 Snacks" : (cat === "Grains" ? "🌾 Grains" : (cat === "Oils" ? "🌶️ Oils" : (cat === "Dairy" ? "🥛 Dairy" : "🧼 Household"))));
-            return `
-            <button onclick="setActiveCategoryTab('${cat}')" class="px-3.5 py-1.5 rounded-lg font-bold text-[11px] border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 whitespace-nowrap transition-all ${activeCategoryTab === cat ? 'active-pill-tab' : ''}">
-                ${labelText}
-            </button>
-        `}).join('');
-    }
 
-    function setActiveCategoryTab(cat) {
-        activeCategoryTab = cat;
-        renderFilterTabs();
-        renderCustomerGroceryCatalogueGrid();
-    }
-
-    // REDESIGNED: Premium Clean Retail Catalogue Architecture Layout Renderer Engine Loop Component Frame Node
-    function renderCustomerGroceryCatalogueGrid() {
-        const box = document.getElementById('menu-box');
-        if (!box) return;
-        const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
-        box.innerHTML = '';
-
-        const keys = Object.keys(localGroceryMenuData);
-        if (keys.length === 0) {
-            box.innerHTML = '<div class="col-span-full bg-white dark:bg-slate-900 rounded-xl border dark:border-slate-800 p-6 text-center text-xs font-semibold text-slate-400">Shelf catalogue khali hai. Admin dashboard se items live add karein!</div>';
-            return;
+        function stopOrderAlertLoopSound() {
+            const alarmSound = document.getElementById('order-alert-sound');
+            if (alarmSound) {
+                alarmSound.pause();
+                alarmSound.currentTime = 0;
+            }
         }
-        let count = 0;
-        keys.forEach(id => {
-            const item = localGroceryMenuData[id];
-            if (activeCategoryTab !== "All" && item.category !== activeCategoryTab) return;
-            if (searchVal && !item.name.toLowerCase().includes(searchVal)) return;
-
-            count++;
-            const isAvail = item.available !== false;
-            const inCartObject = activeCustomerCart.find(c => c.name === item.name);
+// ==========================================
+// PART 20: Catalog Card Interface Template Engine Composers
+// ==========================================
+        function rebuildCatalogViewGridInterface(catalogDataMap) {
+            const gridContainer = document.getElementById('catalog-dynamic-grid-viewport');
+            gridContainer.innerHTML = '';
             
-            let actionMarkup = '';
-            if (!isAvail) {
-                actionMarkup = `<span class="text-[9px] tracking-wider font-extrabold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded uppercase block text-center w-full">Out of Stock</span>`;
-            } else if (inCartObject) {
-                actionMarkup = `
-                <div class="flex items-center justify-between bg-emerald-600 text-white rounded-lg p-1 w-full shadow-sm">
-                    <button onclick="decrementItemQuantityCounter('${item.name}')" class="w-5 h-5 flex items-center justify-center font-bold text-xs hover:bg-white/10 rounded">-</button>
-                    <span class="text-xs font-bold">${inCartObject.qty}</span>
-                    <button onclick="incrementItemQuantityCounter('${item.name}')" class="w-5 h-5 flex items-center justify-center font-bold text-xs hover:bg-white/10 rounded">+</button>
-                </div>`;
+            let structuralKeysArray = Object.keys(catalogDataMap);
+            let matchingRecordsFound = false;
+
+            structuralKeysArray.forEach(id => {
+                const product = catalogDataMap[id];
+                if (activeCategoryFilterContext !== "ALL" && product.category !== activeCategoryFilterContext) return;
+                
+                matchingRecordsFound = true;
+                const cartQty = transactionalCartStateMap[id] || 0;
+
+                const nodeCard = document.createElement('div');
+                nodeCard.className = "bg-slate-50/50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/50 p-3 rounded-2xl flex flex-col justify-between product-card-scale transition-colors shadow-sm";
+                nodeCard.innerHTML = `
+                    <div class="relative mb-2">
+                        <div class="w-full h-28 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800/50">
+                            <img src="${product.image}" alt="${product.name}" class="object-contain max-h-full max-w-full transform hover:scale-105 transition-transform" onerror="this.src=''">
+                        </div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500 mb-0.5">${product.category}</p>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-tight mb-1">${product.name}</h4>
+                        </div>
+                        <div class="flex items-center justify-between pt-1">
+                            <p class="text-sm font-black text-slate-900 dark:text-white">₹${product.price}</p>
+                            <div id="action-node-cell-${id}">
+                                ${cartQty > 0 ? `
+                                    <div class="flex items-center bg-store-500 text-white rounded-lg px-2 py-1 gap-2.5 shadow-sm">
+                                        <button onclick="mutateCartItemQuantityState('${id}', -1)" class="font-black text-xs hover:scale-110 active:scale-90 transition-transform"><i class="fa-solid fa-minus"></i></button>
+                                        <span class="text-xs font-black min-w-[10px] text-center">${cartQty}</span>
+                                        <button onclick="mutateCartItemQuantityState('${id}', 1)" class="font-black text-xs hover:scale-110 active:scale-90 transition-transform"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                ` : `
+                                    <button onclick="mutateCartItemQuantityState('${id}', 1)" class="bg-white dark:bg-slate-800 hover:bg-store-500 hover:text-white text-store-600 dark:text-store-400 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1 text-xs font-black shadow-sm transition-all active:scale-90">ADD</button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                gridContainer.appendChild(nodeCard);
+            });
+
+            if(!matchingRecordsFound) {
+                gridContainer.innerHTML = `
+                    <div class="col-span-2 py-12 text-center space-y-2">
+                        <span class="text-slate-300 dark:text-slate-700 text-3xl"><i class="fa-solid fa-box-open"></i></span>
+                        <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">No active products inside this node stream</p>
+                    </div>
+                `;
+            }
+        }
+// ==========================================
+// PART 21: Search Filtration Matrices & Vocal Synthesis Processing Pipes
+// ==========================================
+        function dispatchCatalogSearchFilterPipeline(tokenStr) {
+            const query = tokenStr.toLowerCase().trim();
+            if(!query) {
+                rebuildCatalogViewGridInterface(globalCatalogDataCache);
+                return;
+            }
+            let filteredNodeMap = {};
+            Object.keys(globalCatalogDataCache).forEach(key => {
+                const item = globalCatalogDataCache[key];
+                if(item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query)) {
+                    filteredNodeMap[key] = item;
+                }
+            });
+            rebuildCatalogViewGridInterface(filteredNodeMap);
+        }
+
+        function invokeSpeechSynthesisRecognitionEngine() {
+            const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!SpeechEngine) {
+                alert("Voice engine context abstraction not natively supported on this runtime container.");
+                return;
+            }
+            const processInstance = new SpeechEngine();
+            processInstance.lang = 'en-IN';
+            processInstance.interimResults = false;
+            
+            const micBtn = document.querySelector('.fa-microphone').parentElement;
+            micBtn.classList.add('text-store-500', 'animate-bounce');
+            
+            processInstance.start();
+            processInstance.onresult = (evt) => {
+                const vocalToken = evt.results[0][0].transcript;
+                document.getElementById('global-search-input').value = vocalToken;
+                dispatchCatalogSearchFilterPipeline(vocalToken);
+            };
+            processInstance.onend = () => { micBtn.classList.remove('text-store-500', 'animate-bounce'); };
+        }
+// ==========================================
+// PART 22: Cart State Mechanics & Floating Dock Anchors Synchronizers
+// ==========================================
+        function mutateCartItemQuantityState(productId, deltaModifier) {
+            let activeQty = transactionalCartStateMap[productId] || 0;
+            activeQty += deltaModifier;
+            
+            if(activeQty <= 0) { delete transactionalCartStateMap[productId]; }
+            else { transactionalCartStateMap[productId] = activeQty; }
+            
+            rebuildCatalogViewGridInterface(globalCatalogDataCache);
+            repopulateCartDrawerListViewport();
+            synchronizeFloatingCartAnchorState();
+        }
+
+        function synchronizeFloatingCartAnchorState() {
+            const anchor = document.getElementById('floating-cart-anchor');
+            const totalQtyBadge = document.getElementById('floating-cart-qty-badge');
+            const descLabel = document.getElementById('floating-cart-item-desc');
+            const valueLabel = document.getElementById('floating-cart-total-value');
+            
+            let aggregateQty = 0, transactionalGrossValue = 0;
+            Object.keys(transactionalCartStateMap).forEach(key => {
+                aggregateQty += transactionalCartStateMap[key];
+                transactionalGrossValue += (transactionalCartStateMap[key] * globalCatalogDataCache[key].price);
+            });
+
+            if(aggregateQty > 0) {
+                totalQtyBadge.innerText = aggregateQty;
+                descLabel.innerText = `${Object.keys(transactionalCartStateMap).length} Unique SKU Stack Selection`;
+                valueLabel.innerText = `₹${transactionalGrossValue}`;
+                anchor.className = "absolute bottom-4 left-4 right-4 z-30 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-store-600 dark:to-emerald-700 text-white px-4 py-3 rounded-2xl shadow-xl shadow-slate-950/20 flex items-center justify-between transform translate-y-0 opacity-100 transition-all duration-300 pointer-events-auto";
             } else {
-                actionMarkup = `<button onclick="pushToBasketNode('${item.name.replace(/'/g, "")}', ${item.price})" class="w-full bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 py-1 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all uppercase tracking-wide">Add To Cart</button>`;
-            }
-
-            box.innerHTML += `
-            <div class="premium-grocery-card dark:bg-slate-900 dark:border-slate-800 p-3 flex flex-col justify-between min-h-[140px]">
-                <div>
-                    <!-- Big Size Dynamic Structural Image / Backup Box Block Element Node Rendering Check Container -->
-                   <div class="w-16 h-16 bg-white dark:bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-inner mx-auto mb-1 flex-shrink-0">
-    <!-- Agar HTTP link hai toh photo dikhao, nahi toh purana emoji dikhao -->
-    ${item.icon && item.icon.startsWith('http') ? 
-        `<img src="${item.icon}" class="w-full h-full object-cover">` : 
-        `<span class="text-3xl">${item.icon || '🛍️'}</span>`
-    }
-</div>
-                    <p class="font-bold text-slate-800 dark:text-slate-200 text-xs mt-2 leading-snug truncate">${item.name}</p>
-                </div>
-                <div class="mt-3">
-                    <p class="text-slate-900 dark:text-white font-extrabold text-sm mb-1.5">₹${item.price}</p>
-                    ${actionMarkup}
-                </div>
-            </div>`;
-        });
-
-        if(count === 0 && searchVal) {
-            box.innerHTML = '<p class="col-span-full text-center text-slate-400 py-4 text-xs font-medium">Shelf catalog me aisa koi matching item nahi hai.</p>';
-        }
-    }
-    function pushToBasketNode(name, price) {
-        activeCustomerCart.push({ name, price, qty: 1 });
-        updateGlobalBasketCounters();
-        renderCustomerGroceryCatalogueGrid();
-    }
-
-    function incrementItemQuantityCounter(name) {
-        const item = activeCustomerCart.find(c => c.name === name);
-        if(item) item.qty++;
-        updateGlobalBasketCounters();
-        renderCustomerGroceryCatalogueGrid();
-    }
-
-    function decrementItemQuantityCounter(name) {
-        const index = activeCustomerCart.findIndex(c => c.name === name);
-        if(index !== -1) {
-            activeCustomerCart[index].qty--;
-            if(activeCustomerCart[index].qty <= 0) {
-                activeCustomerCart.splice(index, 1);
+                anchor.className = "absolute bottom-4 left-4 right-4 z-30 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-store-600 dark:to-emerald-700 text-white px-4 py-3 rounded-2xl shadow-xl shadow-slate-950/20 flex items-center justify-between transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none";
+                document.getElementById('cart-drawer-dock').classList.add('translate-y-full');
             }
         }
-        updateGlobalBasketCounters();
-        renderCustomerGroceryCatalogueGrid();
-    }
 
-    function updateGlobalBasketCounters() {
-        let totalBillValue = 0, itemsVolumeCounter = 0;
-        activeCustomerCart.forEach(i => {
-            totalBillValue += (i.price * i.qty);
-            itemsVolumeCounter += i.qty;
-        });
+        function repopulateCartDrawerListViewport() {
+            const stackViewport = document.getElementById('cart-items-stack-viewport');
+            stackViewport.innerHTML = '';
+            
+            let netAggregateValue = 0;
+            Object.keys(transactionalCartStateMap).forEach(key => {
+                const lineItem = globalCatalogDataCache[key];
+                const activeQty = transactionalCartStateMap[key];
+                const aggregateRowCost = activeQty * lineItem.price;
+                netAggregateValue += aggregateRowCost;
 
-        const floatBar = document.getElementById('floating-cart');
-        if (itemsVolumeCounter > 0) floatBar.classList.remove('translate-y-36');
-        else floatBar.classList.add('translate-y-36');
-
-        document.getElementById('float-items').innerText = `${itemsVolumeCounter} Items Added`;
-        document.getElementById('float-total').innerText = `₹${totalBillValue}`;
-        
-        const summaryBox = document.getElementById('cart-summary');
-        if(summaryBox) {
-            summaryBox.innerHTML = activeCustomerCart.map(i => `
-                <div class="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span class="truncate w-1/2">${i.name}</span>
-                    <span class="text-slate-400 text-[10px]">₹${i.price} x ${i.qty}</span>
-                    <span class="text-slate-900 dark:text-white font-extrabold">₹${i.price * i.qty}</span>
-                </div>
-            `).join('');
-        }
-        document.getElementById('sheet-total').innerText = `₹${totalBillValue}`;
-    }
-
-    function toggleCheckoutDrawerState(openFlag) {
-        const drawer = document.getElementById('checkout-sheet');
-        if(openFlag) {
-            drawer.classList.remove('hidden');
-            setTimeout(() => drawer.classList.add('active'), 10);
-        } else {
-            drawer.classList.remove('active');
-            setTimeout(() => drawer.classList.add('hidden'), 400);
-        }
-    }
-    function executeVoiceSearchChannelPipeline() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { alert("Voice search framework layer missing on client."); return; }
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'hi-IN';
-        const micIcon = document.getElementById('mic-node-icon');
-
-        recognition.onstart = () => { micIcon.className = "fa-solid fa-microphone text-rose-500 animate-pulse text-xs"; };
-        recognition.onresult = (event) => {
-            const resultString = event.results[0][0].transcript.replace(/[.।]/g, '').trim();
-            document.getElementById('search-input').value = resultString;
-            renderCustomerGroceryCatalogueGrid();
-        };
-        recognition.onend = () => { micIcon.className = "fa-solid fa-microphone text-xs"; };
-        recognition.start();
-    }
-
-    function initSavedAddressSlots() {
-        const slots = JSON.parse(localStorage.getItem('address_slots') || '[]');
-        const container = document.getElementById('address-slots-container');
-        if(!container) return;
-        if(slots.length === 0) { container.innerHTML = '<span class="text-[9px] text-slate-400 font-medium">No saved location tags.</span>'; return; }
-        container.innerHTML = slots.map((addr, idx) => `
-            <button onclick="applyAddressSlotNode('${addr.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-[9px] rounded-md border dark:border-slate-700 whitespace-nowrap"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>Slot ${idx + 1}</button>
-        `).join('');
-    }
-
-    function commitNewLocationSlotToStorage() {
-        const val = document.getElementById('u-a').value.trim();
-        if(!val) return;
-        let slots = JSON.parse(localStorage.getItem('address_slots') || '[]');
-        if(!slots.includes(val)) {
-            slots.push(val);
-            localStorage.setItem('address_slots', JSON.stringify(slots));
-            initSavedAddressSlots();
-        }
-    }
-
-    function applyAddressSlotNode(addr) { document.getElementById('u-a').value = addr; }
-
-    function evaluateCheckoutGatewayPipeline() {
-        if (!document.getElementById('u-n').value || !document.getElementById('u-p').value || !document.getElementById('u-a').value) { alert("Details missing!"); return; }
-        if (document.getElementById('u-pay').value === "PAID") document.getElementById('qr-modal').classList.remove('hidden');
-        else writeOrderPayloadToFirebaseRTDB("COD");
-    }
-
-    function writeOrderPayloadToFirebaseRTDB(paymentType) {
-        const name = document.getElementById('u-n').value.trim(), phone = document.getElementById('u-p').value.trim();
-        const address = document.getElementById('u-a').value.trim(), timeChoice = document.getElementById('u-t').value;
-
-        let grandSum = 0;
-        let serializedWhatsAppItemsPayload = activeCustomerCart.map(i => {
-            grandSum += (i.price * i.qty);
-            return `▫️ ${i.name} [x${i.qty}] - ₹${i.price * i.qty}`;
-        }).join('%0A');
-
-        rdb.ref('orders').push({
-            customerName: name, customerPhone: phone.replace(/\D/g, ""), address: address,
-            time: timeChoice, items: serializedWhatsAppItemsPayload, total: grandSum, payType: paymentType, status: 'Pending', timestamp: Date.now()
-        })
-        .then(() => {
-            let encodedString = `*नया ऑर्डर: Balaji Variety Store*%0A%0A*ग्राहक:* ${name}%0A*मोबाइल:* ${phone}%0A*पता:* ${address}%0A*समय स्लॉट:* ${timeChoice}%0A*पेमेंट:* ${paymentType}%0A%0A*सामान की सूची:*%0A${serializedWhatsAppItemsPayload}%0A%0A*कुल बिल राशि:* ₹${grandSum}`;
-            activeCustomerCart = []; updateGlobalBasketCounters(); toggleCheckoutDrawerState(false);
-            document.getElementById('qr-modal').classList.add('hidden');
-            window.location.href = `https://wa.me/${MASTER_STORE_CONFIG.storeNumber}?text=${encodedString}`;
-        });
-    }
-
-    // FIX FULL BYPASS: Dashboard accessibility fallback layer injected explicitly 
-    function loginAdminDashboard() {
-        let pinInput = prompt("Secure Dashboard PIN enter karein:");
-        if (pinInput === MASTER_STORE_CONFIG.adminSecretPin) {
-            const adminBox = document.getElementById('admin-panel');
-            if (adminBox) { adminBox.classList.remove('hidden'); adminBox.style.display = 'block'; }
-            const closedScreen = document.getElementById('closed-screen');
-            if (closedScreen) { closedScreen.classList.add('hidden'); closedScreen.style.display = 'none'; }
-            if (typeof rdb !== 'undefined') { rdb.ref('shop_status').set(true); }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            alert("Welcome Pardeep Bhai! Dashboard successfully unlocked.");
-        } else { alert("Administrative Access Denied!"); }
-    }
-
-    function executeShopStatusToggle() { rdb.ref('shop_status').set(!isStoreCurrentlyOpen); }
-
-    // Direct Upload Action Parser Matrix
-    function executeDirectRowBulkUpload() {
-        const categoryNode = document.getElementById('new-cat').value;
-        const bulkTextArea = document.getElementById('bulk-products-area');
-        const rawText = bulkTextArea.value.trim();
-
-        if (categoryNode === "All") { alert("Kripya Category select karein!"); return; }
-        if (!rawText) { alert("Textarea khali hai!"); return; }
-
-        const lines = rawText.split('\n').map(line => line.trim()).filter(line => line !== "");
-        let successCount = 0;
-
-        for (let i = 0; i < lines.length; i += 3) {
-            const pName = lines[i], pPrice = parseInt(lines[i + 1]), pLink = lines[i + 2];
-            if (pName && !isNaN(pPrice) && pLink) {
-                rdb.ref('menu').push({ name: pName, price: pPrice, icon: pLink, category: categoryNode, available: true });
-                successCount++;
-            }
-        }
-        if (successCount > 0) { alert(`🎉 Mubarak ho! Aapke ${successCount} products live ho gaye hain!`); bulkTextArea.value = ''; }
-        else { alert("Format verification failed! Checked inputs array sequence."); }
-    }
-
-    function renderAdminMenuControlList() {
-        const box = document.getElementById('admin-menu-list'); if (!box) return; box.innerHTML = '';
-        Object.keys(localGroceryMenuData).forEach(id => {
-            const item = localGroceryMenuData[id]; const isAvail = item.available !== false;
-            box.innerHTML += `
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 flex items-center justify-between text-[11px]">
-                <span class="w-24 truncate text-slate-300">${item.icon && item.icon.startsWith('http') ? `<img src="${item.icon}" class="w-4 h-4 inline rounded object-cover mr-1">` : '📦'} ${item.name}</span>
-                <div class="flex items-center gap-1">
-                    <input type="number" value="${item.price}" onchange="rdb.ref('menu/${id}/price').set(parseInt(this.value))" class="w-10 bg-slate-950 text-center text-amber-400 rounded py-0.5 border border-slate-800 outline-none">
-                    <button onclick="rdb.ref('menu/${id}/available').set(${!isAvail})" class="px-1.5 py-0.5 rounded text-white text-[8px] ${isAvail ? 'bg-emerald-600' : 'bg-rose-600'}">${isAvail ? 'IN' : 'OUT'}</button>
-                    <button onclick="if(confirm('Delete?')) rdb.ref('menu/${id}').remove()" class="text-rose-400 ml-0.5"><i class="fa fa-trash"></i></button>
-                </div>
-            </div>`;
-        });
-    }
-
-    function renderAdminLiveOrdersDashboardQueue(orders) {
-        const orderList = document.getElementById('admin-orders-list'); if (!orderList) return; orderList.innerHTML = '';
-        const keys = Object.keys(orders).reverse();
-
-        if (keys.length === 0) { orderList.innerHTML = '<p class="text-slate-500 text-center text-[10px] py-2">No shipments pending.</p>'; return; }
-        keys.forEach(id => {
-            const o = orders[id]; fTime = new Date(o.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const sColor = o.status === 'Pending' ? 'text-amber-400' : (o.status === 'Preparing' ? 'text-blue-400' : 'text-emerald-400');
-            const itemString = o.items ? o.items.replace(/%0A/g, '<br>') : '';
-
-            orderList.innerHTML += `
-            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[10px]">
-                <div class="flex justify-between items-start mb-1">
-                    <div><p class="font-bold text-slate-200">${o.customerName}</p><p class="text-[8px] text-slate-500 mt-0.5">${fTime} | ${o.payType} | 🕒 ${o.time}</p></div>
-                    <span class="font-bold text-[8px] ${sColor}">${o.status}</span>
-                </div>
-                <div class="text-slate-300 text-[9px] mb-2 bg-slate-900 p-2 rounded leading-relaxed border border-slate-800/60">${itemString}</div>
-                <div class="flex gap-1">
-                    <select onchange="updateOrderStatusStageNode('${id}', this.value, '${o.customerPhone}', '${o.customerName}')" class="flex-1 bg-slate-900 text-slate-300 p-1 rounded text-[9px] border border-slate-800 font-bold outline-none"><option value="">Stage</option><option value="Preparing">Packing</option><option value="Out for Delivery">Dispatched</option><option value="Completed">Delivered</option><option value="Cancelled">Cancel</option></select>
-                    <button onclick="window.location.href='https://wa.me/91${o.customerPhone}'" class="bg-emerald-600 px-2 rounded text-white text-[10px]"><i class="fa-brands fa-whatsapp"></i></button>
-                </div>
-            </div>`;
-        });
-    }
-
-    function updateOrderStatusStageNode(id, newStatus, phone, name) {
-        if (!newStatus) return;
-        rdb.ref(`orders/${id}/status`).set(newStatus).then(() => {
-            if (confirm("WhatsApp trigger alert?")) {
-                let alertString = `Hello ${name}, aapka Balaji Variety Store order ab *${newStatus}* stage par hai.`;
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(alertString)}`, '_blank');
-            }
-        });
-    }
-
-    function recalculateStoreStatsMetrics(orders) {
-        let rev = 0, count = 0, counts = {};
-        Object.keys(orders).forEach(id => {
-            const o = orders[id]; count++; if (o.status === "Completed") rev += (o.total || 0);
-            if (o.items) { o.items.split('%0A').forEach(l => { let cleaned = l.replace(/[▫️\-\s]/g, '').split('[')[0]; if(cleaned) counts[cleaned] = (counts[cleaned] || 0) + 1; }); }
-        });
-        let top = "-", max = 0; Object.keys(counts).forEach(n => { if (counts[n] > max) { max = counts[n]; top = n; } });
-        if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = `₹${rev}`;
-        if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = count;
-        if(document.getElementById('stat-top')) document.getElementById('stat-top').innerText = top;
-    }
-
-    function triggerDailySalesPDFReport() {
-        rdb.ref('orders').once('value', (snap) => {
-            const orders = snap.val() || {}; document.getElementById('pdf-timestamp').innerText = new Date().toLocaleString('en-IN');
-            let revenue = 0, count = 0, rowsHtml = '';
-            Object.keys(orders).forEach(id => {
-                const o = orders[id]; count++; if(o.status === "Completed") revenue += (o.total || 0);
-                rowsHtml += `<tr class="text-[10px]"><td class="p-2 font-bold">${o.customerName}</td><td class="p-2">${o.customerPhone}</td><td class="p-2 text-gray-500 max-w-xs">${o.items ? o.items.replace(/%0A/g, ', ') : ''}</td><td class="p-2 font-bold text-emerald-600">₹${o.total}</td></tr>`;
+                const nodeRow = document.createElement('div');
+                nodeRow.className = "flex items-center justify-between bg-slate-50 dark:bg-slate-800/30 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/30";
+                nodeRow.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${lineItem.image}" class="w-10 h-10 object-contain bg-white dark:bg-slate-900 rounded-lg p-0.5 border" onerror="this.src=''">
+                        <div>
+                            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-1">${lineItem.name}</h5>
+                            <p class="text-[10px] text-slate-400 font-medium">₹${lineItem.price} &times; ${activeQty}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-black text-slate-900 dark:text-white">₹${aggregateRowCost}</span>
+                        <div class="flex items-center bg-store-500 text-white rounded-lg px-1.5 py-0.5 gap-2">
+                            <button onclick="mutateCartItemQuantityState('${key}', -1)" class="text-[10px] font-black"><i class="fa-solid fa-minus"></i></button>
+                            <span class="text-[11px] font-black">${activeQty}</span>
+                            <button onclick="mutateCartItemQuantityState('${key}', 1)" class="text-[10px] font-black"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                `;
+                stackViewport.appendChild(nodeRow);
             });
-            document.getElementById('pdf-rev-node').innerText = `₹${revenue}`; document.getElementById('pdf-count-node').innerText = count;
-            document.getElementById('pdf-table-body').innerHTML = rowsHtml || '<tr><td colspan="4" class="p-2 text-center text-gray-400">Ledger empty.</td></tr>';
-            const element = document.getElementById('pdf-report-template');
-            const options = { margin: 0.5, filename: `Report_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
-            html2pdf().from(element).set(options).save();
-        });
-    }
 
-    function openTrackerModal() { document.getElementById('tracker-modal').classList.remove('hidden'); }
-    function openHistoryModal() { document.getElementById('history-modal').classList.remove('hidden'); }
-    function closeGlobalModalContainer(id) { document.getElementById(id).classList.add('hidden'); }
+            document.getElementById('summary-subtotal').innerText = `₹${netAggregateValue}`;
+            document.getElementById('summary-gross-payable').innerText = `₹${netAggregateValue}`;
+        }
 
-    function executeOrderTrackingSyncEngine() {
-        const ph = document.getElementById('track-phone').value.trim().replace(/\D/g, ""), res = document.getElementById('track-result'); if (!ph || !res) return;
-        rdb.ref('orders').once('value', (snap) => {
-            const data = snap.val() || {}; let html = "";
-            Object.keys(data).reverse().forEach(id => {
-                const o = data[id]; if (o.customerPhone === ph) {
-                    const activeStep = o.status === 'Pending' ? 1 : (o.status === 'Preparing' ? 2 : 3);
-                    html += `<div class="p-3 bg-gray-50 dark:bg-slate-950 rounded-xl border dark:border-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-300"><div class="flex justify-between mb-2"><span>Status: ${o.status}</span><span>Bill: ₹${o.total}</span></div><div class="space-y-2"><div class="flex gap-2 ${activeStep >= 1 ? 'text-emerald-600' : 'text-slate-300'}"><i class="fa-solid fa-circle text-[8px] mt-1"></i><p>Order Verified</p></div><div class="flex gap-2 ${activeStep >= 2 ? 'text-emerald-600' : 'text-slate-300'}"><i class="fa-solid fa-circle text-[8px] mt-1"></i><p>Sorting & Packing Box</p></div><div class="flex gap-2 ${activeStep >= 3 ? 'text-emerald-600' : 'text-slate-300'}"><i class="fa-solid fa-circle text-[8px] mt-1"></i><p>Dispatched / Delivered</p></div></div></div>`;
+        function toggleCartDrawerDockView() {
+            const container = document.getElementById('cart-drawer-dock');
+            container.classList.toggle('translate-y-full');
+            repopulateCartDrawerListViewport();
+        }
+
+        function switchActiveCategoryFilterState(targetPillCtx, btnContextNode) {
+            activeCategoryFilterContext = targetPillCtx;
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.className = "category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800/30";
+            });
+            btnContextNode.className = "category-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-extrabold transition-all bg-gradient-to-r from-store-500 to-emerald-600 text-white shadow-md shadow-store-500/10 scale-100";
+            rebuildCatalogViewGridInterface(globalCatalogDataCache);
+        }
+// ==========================================
+// PART 23: Client Checkout Streams Pipelines Ingestion & Payload Assemblers
+// ==========================================
+        function commitOrderCheckoutTransactionPipeline() {
+            const identity = document.getElementById('customer-identity-node').value.trim();
+            const contact = document.getElementById('customer-telephony-node').value.trim();
+            const location = document.getElementById('customer-address-node').value.trim();
+
+            if(!identity || !contact || !location) { alert("Missing operational parameters. Address vectors required."); return; }
+            if(Object.keys(transactionalCartStateMap).length === 0) { alert("Execution payload error: Context matrix empty."); return; }
+
+            let payloadItemMap = {};
+            let billSubtotal = 0;
+            Object.keys(transactionalCartStateMap).forEach(key => {
+                const item = globalCatalogDataCache[key];
+                payloadItemMap[key] = { name: item.name, price: item.price, qty: transactionalCartStateMap[key] };
+                billSubtotal += (transactionalCartStateMap[key] * item.price);
+            });
+
+            const databasePayload = {
+                customer: { name: identity, phone: contact, address: location },
+                items: payloadItemMap,
+                billAmount: billSubtotal,
+                status: "Pending Ingestion",
+                timestamp: ServerValueTimestampEngineBlock()
+            };
+
+            const newOrderRef = rdb.ref('orders').push();
+            lastPlacedOrderId = newOrderRef.key;
+
+            newOrderRef.set(databasePayload).then(() => {
+                alert("Order Dispatched successfully into Hyperlocal Streams!");
+                
+                document.getElementById('customer-live-tracking-node').classList.remove('hidden');
+                document.getElementById('tracking-id-label').innerText = `ID: ${lastPlacedOrderId.substring(1, 8).toUpperCase()}`;
+                updateLiveTrackingVisualSteps("Pending Ingestion");
+
+                transactionalCartStateMap = {};
+                synchronizeFloatingCartAnchorState();
+                rebuildCatalogViewGridInterface(globalCatalogDataCache);
+            });
+        }
+
+        function ServerValueTimestampEngineBlock() { return new Date().toISOString(); }
+
+        function toggleAdminPanelControlState() {
+            const panel = document.getElementById('admin-panel-overlay');
+            panel.classList.toggle('hidden');
+        }
+
+        function authenticateOperationalTerminalGate() {
+            const challengeToken = document.getElementById('admin-security-key').value;
+            if(challengeToken === "Pardeep@Tailor") {
+                document.getElementById('admin-auth-container').classList.add('hidden');
+                document.getElementById('admin-dashboard-console').classList.remove('hidden');
+            } else { alert("Cryptographic verification failed: Scope rejected."); }
+        }
+// ==========================================
+// PART 24: Admin Dashboard Realtime Queue Generator & Status Triggers
+// ==========================================
+        function renderAdminLiveOrdersDashboardQueue(ordersDataMap) {
+            const panelQueue = document.getElementById('admin-orders-list');
+            panelQueue.innerHTML = '';
+            
+            Object.keys(ordersDataMap).reverse().forEach(id => {
+                const order = ordersDataMap[id];
+                const nodeCard = document.createElement('div');
+                nodeCard.className = "bg-slate-900 border border-slate-800 p-2.5 rounded text-slate-300 text-xs space-y-1.5 shadow-inner";
+                
+                let orderItemsStr = '';
+                Object.keys(order.items || {}).forEach(k => {
+                    const line = order.items[k];
+                    orderItemsStr += `<span class="block text-[11px] text-slate-400 font-mono">&bull; ${line.name} [x${line.qty}] - ₹${line.price * line.qty}</span>`;
+                });
+
+                nodeCard.innerHTML = `
+                    <div class="flex justify-between items-start border-b border-slate-800 pb-1.5">
+                        <div>
+                            <p class="font-black text-amber-400 font-mono text-[11px]">ID: ${id.substring(1, 8).toUpperCase()}</p>
+                            <p class="text-[10px] text-slate-400 font-medium">${order.customer?.name} (${order.customer?.phone})</p>
+                            <p class="text-[10px] text-slate-500 italic">${order.customer?.address}</p>
+                        </div>
+                        <p class="text-xs font-black text-emerald-400">₹${order.billAmount}</p>
+                    </div>
+                    <div class="py-1">${orderItemsStr}</div>
+                    <div class="flex gap-2 items-center justify-between border-t border-slate-800/60 pt-1.5">
+                        <span class="text-[10px] uppercase font-black px-1.5 py-0.5 rounded ${order.status === 'Pending Ingestion' ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400'}">${order.status}</span>
+                        <select onchange="updateOrderStatusStageNode('${id}', this.value, '${order.customer?.phone}', '${order.customer?.name}')" class="bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-[10px] text-white focus:outline-none">
+                            <option value="">Update Status...</option>
+                            <option value="Packing Started">Packing Started</option>
+                            <option value="Dispatched Out">Dispatched Out</option>
+                            <option value="Delivered Safe">Delivered Safe</option>
+                        </select>
+                    </div>
+                `;
+                panelQueue.appendChild(nodeCard);
+            });
+        }
+
+        function updateOrderStatusStageNode(id, newStatus, phone, name) {
+            if (!newStatus) return;
+            stopOrderAlertLoopSound();
+
+            rdb.ref(`orders/${id}/status`).set(newStatus).then(() => {
+                if (confirm("WhatsApp trigger alert status notification?")) {
+                    let alertString = `Hello ${name}, aapka Balaji Variety Store order ab *${newStatus}* stage par hai. Tracking screen par live status dekhein!`;
+                    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(alertString)}`, '_blank');
                 }
             });
-            res.innerHTML = html || `<p class="text-center text-slate-400 text-xs py-2">No active shipments.</p>`;
-        });
-    }
+        }
+// ==========================================
+// PART 25: Swiggy Stepper Simulation Engine & Structural Bulk Catalog Parser Ingestion
+// ==========================================
+        function updateLiveTrackingVisualSteps(currentStatus) {
+            const step1 = document.getElementById('track-step-1');
+            const step2 = document.getElementById('track-step-2');
+            const step3 = document.getElementById('track-step-3');
+            const step4 = document.getElementById('track-step-4');
+            const line = document.getElementById('step-line-progress');
+            const t1 = document.getElementById('track-text-1');
+            const t2 = document.getElementById('track-text-2');
+            const t3 = document.getElementById('track-text-3');
+            const t4 = document.getElementById('track-text-4');
 
-    function fetchCompletedUserHistoryLogs() {
-        const ph = document.getElementById('history-phone').value.trim().replace(/\D/g, ""), res = document.getElementById('history-result'); if (!ph || !res) return;
-        rdb.ref('orders').once('value', (snap) => {
-            const data = snap.val() || {}; let html = "";
-            Object.keys(data).reverse().forEach(id => {
-                const o = data[id]; if (o.customerPhone === ph && o.status === "Completed") {
-                    html += `<div class="bg-gray-50 dark:bg-slate-950 p-2.5 rounded-lg text-[10px] font-bold border dark:border-slate-800 flex justify-between items-center"><div class="w-3/4"><p class="text-slate-700 dark:text-slate-300 truncate">${o.items ? o.items.replace(/%0A/g, ', ') : ''}</p><p class="text-[8px] text-slate-400 mt-0.5">${new Date(o.timestamp).toLocaleDateString()}</p></div><span class="text-emerald-600 font-extrabold">₹${o.total}</span></div>`;
-                }
+            [step1, step2, step3, step4].forEach(s => s.className = "w-7 h-7 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-400 font-bold border-2 border-slate-800 transition-colors");
+            [t1, t2, t3, t4].forEach(t => t.className = "text-[9px] font-black tracking-tighter text-slate-400");
+
+            if (currentStatus === "Pending Ingestion") {
+                step1.className = "w-7 h-7 mx-auto rounded-full bg-store-500/10 text-store-500 flex items-center justify-center text-[10px] font-bold border-2 border-store-500 animate-pulse";
+                t1.className = "text-[9px] font-black tracking-tighter text-store-500 animate-pulse";
+                line.style.width = "0%";
+            } else if (currentStatus === "Packing Started") {
+                step1.className = "w-7 h-7 mx-auto rounded-full bg-store-500 text-white flex items-center justify-center text-[10px] font-bold border-2 border-store-500";
+                step2.className = "w-7 h-7 mx-auto rounded-full bg-store-500/10 text-store-500 flex items-center justify-center text-[10px] font-bold border-2 border-store-500 animate-pulse";
+                t1.className = "text-[9px] font-black tracking-tighter text-store-600";
+                t2.className = "text-[9px] font-black tracking-tighter text-store-500 animate-pulse";
+                line.style.width = "33%";
+            } else if (currentStatus === "Dispatched Out") {
+                step1.className = "w-7 h-7 mx-auto rounded-full bg-store-500 text-white flex items-center justify-center text-[10px] font-bold border-2 border-store-500";
+                step2.className = "w-7 h-7 mx-auto rounded-full bg-store-500 text-white flex items-center justify-center text-[10px] font-bold border-2 border-store-500";
+                step3.className = "w-7 h-7 mx-auto rounded-full bg-store-500/10 text-store-500 flex items-center justify-center text-[10px] font-bold border-2 border-store-500 animate-pulse";
+                t1.className = "text-[9px] font-black tracking-tighter text-store-600";
+                t2.className = "text-[9px] font-black tracking-tighter text-store-600";
+                t3.className = "text-[9px] font-black tracking-tighter text-store-500 animate-pulse";
+                line.style.width = "66%";
+            } else if (currentStatus === "Delivered Safe") {
+                [step1, step2, step3, step4].forEach(s => s.className = "w-7 h-7 mx-auto rounded-full bg-store-500 text-white flex items-center justify-center text-[10px] font-bold border-2 border-store-500");
+                [t1, t2, t3, t4].forEach(t => t.className = "text-[9px] font-black tracking-tighter text-store-600");
+                line.style.width = "100%";
+                setTimeout(() => { document.getElementById('customer-live-tracking-node').classList.add('hidden'); }, 10000);
+            }
+        }
+
+        function triggerWebPushNotificationAlertCard() {
+            if (!("Notification" in window)) return;
+            if (Notification.permission === "granted") {
+                new Notification("🚨 NAYA ORDER AAYA HAI!", {
+                    body: "Pardeep Bhai, dukan par naya order aaya hai, jaldi check karo!",
+                    icon: "https://cdn-icons-png.flaticon.com/512/3514/3514491.png"
+                });
+            } else if (Notification.permission !== "denied") { Notification.requestPermission(); }
+        }
+
+        function recalculateStoreStatsMetrics() {
+            rdb.ref('products').once('value', pSnap => {
+                rdb.ref('orders').once('value', oSnap => {
+                    const products = pSnap.val() || {};
+                    const orders = oSnap.val() || {};
+                    document.getElementById('stat-total-items').innerText = Object.keys(products).length;
+                    document.getElementById('stat-total-orders').innerText = Object.keys(orders).length;
+                    let grossRevenueVal = 0;
+                    Object.keys(orders).forEach(k => { grossRevenueVal += (orders[k].billAmount || 0); });
+                    document.getElementById('stat-total-revenue').innerText = `₹${grossRevenueVal}`;
+                });
             });
-            res.innerHTML = html || `<p class="text-center text-slate-400 text-xs py-2">History log empty.</p>`;
-        });
-    }
-</script>
+        }
+
+        function executeBulkCatalogIngestionPipeline() {
+            const targetedCategory = document.getElementById('bulk-target-category').value;
+            const textStreamRaw = document.getElementById('bulk-raw-stream-input').value.trim();
+            if(!textStreamRaw) { alert("Payload structural failure: Stream buffer input empty."); return; }
+            const payloadTokenLines = textStreamRaw.split('\n').map(l => l.trim()).filter(l => l !== '');
+            if(payloadTokenLines.length % 3 !== 0) { alert("Parsing error: Structural balance failure. Formatting sequence incorrect."); return; }
+            for (let pointer = 0; pointer < payloadTokenLines.length; pointer += 3) {
+                const parsedRecordPayload = {
+                    name: payloadTokenLines[pointer],
+                    price: parseFloat(payloadTokenLines[pointer + 1]),
+                    image: payloadTokenLines[pointer + 2],
+                    category: targetedCategory
+                };
+                rdb.ref('products').push(parsedRecordPayload);
+            }
+            alert("Batch operation completed successfully! Stream fully cleared.");
+            document.getElementById('bulk-raw-stream-input').value = '';
+        }
+
+        function toggleGlobalThemeEngineState() {
+            const root = document.documentElement;
+            root.classList.toggle('dark');
+            const status = root.classList.contains('dark');
+            localStorage.setItem('dark-theme', status);
+            document.getElementById('theme-toggle-icon').className = status ? "fa-solid fa-sun text-sm" : "fa-solid fa-moon text-sm";
+        }
+
+        function initThemeEngine() {
+            if (localStorage.getItem('dark-theme') === 'true') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle-icon').className = "fa-solid fa-sun text-sm";
+            }
+        }
+        initThemeEngine();
+    </script>
 </body>
 </html>
