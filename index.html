@@ -128,7 +128,7 @@
                     <option value="Grains">🌾 Daal & Chawal</option>
                     <option value="Oils">🌶️ Oil & Spices</option>
                     <option value="Dairy">🥛 Daily Milk & Dairy</option>
-                    <option value="Other">🧼 Household & Cleaning</option>
+                    <option value="Other">Beauti & Cleaning</option>
                 </select>
                 
                 <textarea id="bulk-products-area" rows="6" placeholder="Fortune Oil&#10;175&#10;https://i.ibb.co/Y7fkZ9Nz/oil.jpg&#10;Tata Salt&#10;28&#10;https://i.ibb.co/Y7fkZ9Nz/salt.jpg" class="w-full p-3 bg-slate-900 border border-slate-800 rounded-xl text-xs outline-none text-white font-mono scroll-hide"></textarea>
@@ -455,12 +455,13 @@
             <div class="premium-grocery-card dark:bg-slate-900 dark:border-slate-800 p-3 flex flex-col justify-between min-h-[140px]">
                 <div>
                     <!-- Big Size Dynamic Structural Image / Backup Box Block Element Node Rendering Check Container -->
-                    <div class="w-16 h-16 bg-white dark:bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-inner mx-auto mb-1 flex-shrink-0">
-                        ${item.icon && item.icon.startsWith('http') ? 
-                            `<img src="${item.icon}" class="w-full h-full object-cover">` : 
-                            `<span class="text-3xl">📦</span>`
-                        }
-                    </div>
+                   <div class="w-16 h-16 bg-white dark:bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-inner mx-auto mb-1 flex-shrink-0">
+    <!-- Agar HTTP link hai toh photo dikhao, nahi toh purana emoji dikhao -->
+    ${item.icon && item.icon.startsWith('http') ? 
+        `<img src="${item.icon}" class="w-full h-full object-cover">` : 
+        `<span class="text-3xl">${item.icon || '🛍️'}</span>`
+    }
+</div>
                     <p class="font-bold text-slate-800 dark:text-slate-200 text-xs mt-2 leading-snug truncate">${item.name}</p>
                 </div>
                 <div class="mt-3">
