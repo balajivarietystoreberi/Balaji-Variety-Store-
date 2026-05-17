@@ -593,12 +593,32 @@
     }
 
     function loginAdminDashboard() {
-        if (prompt("Secure Dashboard PIN enter karein:") === MASTER_STORE_CONFIG.adminSecretPin) {
-            document.getElementById('admin-panel').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else { alert("Administrative Access Denied!"); }
+    let pinInput = prompt("Secure Dashboard PIN enter karein:");
+    if (pinInput === MASTER_STORE_CONFIG.adminSecretPin) {
+        // Force fully bypass blocking screens
+        const adminBox = document.getElementById('admin-panel');
+        if (adminBox) {
+            adminBox.classList.remove('hidden');
+            adminBox.style.display = 'block'; // Force visibility
+        }
+        
+        const closedScreen = document.getElementById('closed-screen');
+        if (closedScreen) {
+            closedScreen.classList.add('hidden');
+            closedScreen.style.display = 'none'; // Force hide closed screen
+        }
+        
+        // Auto Initialize Firebase empty nodes if missing
+        if (typeof rdb !== 'undefined') {
+            rdb.ref('shop_status').set(true);
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alert("Welcome Pardeep Bhai! Dashboard successfully unlocked.");
+    } else { 
+        alert("Administrative Access Denied! Galat Password."); 
     }
-
+}
     function executeShopStatusToggle() { rdb.ref('shop_status').set(!isStoreCurrentlyOpen); }
 
     function commitNewProductToDatabase() {
