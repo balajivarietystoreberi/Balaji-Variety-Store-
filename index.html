@@ -568,16 +568,18 @@ rdb.ref('orders').on('value', snap => {
         }
 
         function updateOrderStatusStageNode(id, newStatus, phone, name) {
-            if (!newStatus) return;
-            stopOrderAlertLoopSound();
+    if (!newStatus) return;
+    
+    // Status badalte hi alarm bajna turant band ho jayega
+    stopOrderAlertLoopSound();
 
-            rdb.ref(`orders/${id}/status`).set(newStatus).then(() => {
-                if (confirm("WhatsApp trigger alert status notification?")) {
-                    let alertString = `Hello ${name}, aapka Balaji Variety Store order ab *${newStatus}* stage par hai. Tracking screen par live status dekhein!`;
-                    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(alertString)}`, '_blank');
-                }
-            });
+    rdb.ref(`orders/${id}/status`).set(newStatus).then(() => {
+        if (confirm("WhatsApp trigger alert status notification?")) {
+            let alertString = `Hello ${name}, aapka order ab *${newStatus}* stage par hai.`;
+            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(alertString)}`, '_blank');
         }
+    });
+}
 // ==========================================
 // PART 25: Swiggy Stepper Simulation Engine & Structural Bulk Catalog Parser Ingestion
 // ==========================================
