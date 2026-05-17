@@ -3,296 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balaji Variety Store - Admin Pro Master</title>
+    <title>Balaji Variety Store - New Generation Grocery</title>
     
-    <!-- Premium UI Frameworks -->
+    <!-- Tailwind CSS for Modern Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase Legacy Core App & RTDB SDKs -->
+    <!-- Firebase Core App & RTDB Legacy SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <!-- HTML2PDF library for generating professional transaction sheets -->
+    <!-- HTML2PDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
-        // Tailwind configuration for instant seamless dark mode toggles
         tailwind.config = {
             darkMode: 'class',
         }
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s; }
-        .glass-nav { backdrop-filter: blur(14px); }
-        .sheet { transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s; }
+        
+        /* Modern E-Commerce Card Style (Not Food App) */
+        .premium-grocery-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .premium-grocery-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(16, 185, 129, 0.08); border-color: #a7f3d0; }
+        
+        /* New Slider Drawer UI instead of Sheet */
+        .modern-drawer { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-radius: 24px 24px 0 0; transform: translateY(110%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); z-index: 100; box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
+        .modern-drawer.active { transform: translateY(0); }
+        
         .scroll-hide::-webkit-scrollbar { display: none; }
-        .t-bar { position: relative; }
-        .t-step::after { content: ''; position: absolute; left: 14px; top: 28px; width: 2px; height: calc(100% - 12px); background: #cbd5e1; z-index: 0; }
-        .t-step:last-child::after { display: none; }
-        .t-step.completed::after { background: #10b981; }
+        .active-pill-tab { background: #059669 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-slate-950 dark:text-gray-100 pb-24">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 pb-32">
 
-<!-- Sound file framework placeholder for loud dashboard alert ringers -->
+<!-- Ringer Alert Framework for New Orders -->
 <audio id="order-alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav" preload="auto"></audio>
 
-<!-- App Installation Alert Layer Prompt (PWA Banner Component) -->
-<div id="pwa-prompt" class="hidden fixed top-4 inset-x-4 max-w-md mx-auto bg-emerald-600 text-white p-3.5 rounded-2xl shadow-xl z-[9000] flex justify-between items-center animate-bounce">
-    <div class="flex items-center gap-2.5">
-        <span class="text-xl">📲</span>
+<!-- Smart PWA Installation Card -->
+<div id="pwa-prompt" class="hidden fixed top-4 inset-x-4 max-w-sm mx-auto bg-slate-900 dark:bg-emerald-900 text-white p-3 rounded-xl shadow-2xl z-[9000] flex justify-between items-center border border-slate-800">
+    <div class="flex items-center gap-2">
+        <span class="text-lg">🛍️</span>
         <div>
-            <p class="text-xs font-extrabold tracking-tight">App install karein!</p>
-            <p class="text-[10px] opacity-90 font-medium">Bina browser khole direct order karein</p>
+            <p class="text-xs font-bold">App Install Karein</p>
+            <p class="text-[10px] opacity-80">Ek click me shopping shuru karein</p>
         </div>
     </div>
-    <div class="flex items-center gap-1.5">
-        <button id="btn-pwa-install" class="bg-white text-emerald-700 font-extrabold text-[10px] px-3 py-1.5 rounded-lg uppercase">Install</button>
-        <button onclick="document.getElementById('pwa-prompt').remove()" class="text-white/80 p-1 text-xs"><i class="fa-solid fa-xmark"></i></button>
-    </div>
+    <button id="btn-pwa-install" class="bg-emerald-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase">Get App</button>
 </div>
-<!-- Shop Closed Blockade Layer -->
-<div id="closed-screen" class="hidden fixed inset-0 bg-white/95 dark:bg-slate-950/98 z-[5000] flex flex-col items-center justify-center text-center p-6">
-    <div class="w-20 h-20 bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 rounded-3xl flex items-center justify-center text-3xl mb-4 shadow-sm animate-pulse">🏪</div>
-    <h2 class="text-2xl font-extrabold text-gray-800 dark:text-gray-200">Store Temporarily Closed</h2>
-    <p class="text-xs text-gray-400 dark:text-gray-500 font-medium mt-1 max-w-xs">Dukan abhi band hai. Kripya dukan khulne ka intezaar karein.</p>
-    <button onclick="loginAdmin()" class="mt-6 px-6 py-2.5 bg-gray-100 dark:bg-slate-900 border dark:border-slate-800 rounded-xl text-xs font-bold tracking-wider hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors">OWNER LOGIN</button>
+<!-- Store Status Screen Block -->
+<div id="closed-screen" class="hidden fixed inset-0 bg-slate-50 dark:bg-slate-950 z-[5000] flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-16 h-16 bg-rose-50 text-rose-500 dark:bg-rose-950/30 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-inner">🔒</div>
+    <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-200">Dukan Abhi Band Hai</h2>
+    <p class="text-xs text-slate-400 mt-1">Balaji Variety Store par aapka swagat hai, kripya khulne ka intezaar karein.</p>
+    <button onclick="loginAdminDashboard()" class="mt-6 px-5 py-2 bg-slate-200 dark:bg-slate-900 border dark:border-slate-800 rounded-lg text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-800 transition-colors">Owner Login</button>
 </div>
 
-<!-- Modern Premium Application Header Header -->
-<header class="glass-nav sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 border-b border-gray-100 dark:border-slate-800 px-4 py-3 flex justify-between items-center shadow-sm">
-    <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center text-xl shadow-md shadow-emerald-600/20">🛒</div>
+<!-- Clean E-Commerce Minimal Top Navigation -->
+<header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 py-3 flex justify-between items-center shadow-sm">
+    <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400 rounded-xl flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-store"></i></div>
         <div>
-            <h1 class="font-extrabold text-base tracking-tight leading-none text-emerald-600 dark:text-emerald-400">Balaji Variety Store</h1>
-            <p class="text-[10px] text-gray-400 dark:text-slate-500 font-semibold mt-1 flex items-center gap-1">
-                <span id="status-indicator-dot" class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                <span id="status-indicator-text">Checking Store...</span>
-            </p>
+            <h1 class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white leading-tight">Balaji Variety Store</h1>
+            <div class="flex items-center gap-1.5 mt-0.5 text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                <span id="status-text">Connecting...</span>
+                <span>| Badi beri</span>
+            </div>
         </div>
     </div>
-    <div class="flex items-center gap-1.5">
-        <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-moon" id="dark-icon"></i></button>
-        <button onclick="openTracker()" class="w-9 h-9 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-truck-ramp-box"></i></button>
-        <button onclick="openHistory()" class="w-9 h-9 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-clock-rotate-left"></i></button>
-        <button onclick="loginAdmin()" class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs"><i class="fa-solid fa-sliders"></i></button>
+    <div class="flex items-center gap-1">
+        <button onclick="toggleDarkModeTheme()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid fa-moon" id="theme-toggle-icon"></i></button>
+        <button onclick="openTrackerModal()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid fa-truck-fast"></i></button>
+        <button onclick="openHistoryModal()" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs"><i class="fa-solid fa-history"></i></button>
+        <button onclick="loginAdminDashboard()" class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-shield"></i></button>
     </div>
 </header>
 <div class="max-w-2xl mx-auto px-4 py-4">
 
-    <!-- Active Admin Dashboard Workspace -->
-    <div id="admin-panel" class="hidden bg-slate-900 rounded-3xl shadow-2xl p-5 mb-6 text-white border border-slate-800">
-        <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-            <h2 class="text-sm font-extrabold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-crown"></i> Master Dashboard</h2>
+    <!-- Admin Master Dashboard Controls (Grid Update) -->
+    <div id="admin-panel" class="hidden bg-slate-900 rounded-2xl shadow-xl p-5 mb-6 text-white border border-slate-800">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2.5">
+            <h2 class="text-xs font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> Store Admin Panel</h2>
             <div class="flex items-center gap-1.5">
-                <button onclick="generateDailyPDFReport()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-lg tracking-wider uppercase"><i class="fa-solid fa-file-pdf mr-1"></i> Report</button>
-                <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="w-7 h-7 bg-white/10 rounded-full flex items-center justify-center text-xs hover:bg-white/20"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="triggerDailySalesPDFReport()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase tracking-wider"><i class="fa-solid fa-file-export mr-1"></i> PDF Report</button>
+                <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
 
-        <button id="toggle-shop-btn" onclick="toggleShopStatus()" class="w-full py-2.5 rounded-xl font-bold mb-4 text-xs tracking-wider uppercase transition-colors">Checking Status...</button>
+        <button id="toggle-shop-btn" onclick="executeShopStatusToggle()" class="w-full py-2 rounded-lg font-bold mb-4 text-xs tracking-wider uppercase transition-colors">Syncing Status...</button>
 
-        <div class="grid grid-cols-3 gap-2.5 mb-5">
-            <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center">
-                <p id="stat-revenue" class="text-base font-extrabold text-emerald-400">₹0</p>
-                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Today Revenue</p>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
+                <p id="stat-revenue" class="text-base font-black text-emerald-400">₹0</p>
+                <p class="text-[9px] text-slate-500 font-bold uppercase mt-0.5">Today Total Sales</p>
             </div>
-            <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center">
-                <p id="stat-orders" class="text-base font-extrabold text-blue-400">0</p>
-                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Total Orders</p>
+            <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
+                <p id="stat-orders" class="text-base font-black text-blue-400">0</p>
+                <p class="text-[9px] text-slate-500 font-bold uppercase mt-0.5">Orders Placed</p>
             </div>
-            <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center">
-                <p id="stat-top" class="text-xs font-bold text-orange-400 truncate mt-0.5">-</p>
-                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-1">Top Item</p>
+            <div class="bg-slate-950/50 rounded-xl p-2.5 border border-slate-800 text-center">
+                <p id="stat-top" class="text-xs font-bold text-amber-400 truncate mt-0.5">-</p>
+                <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Top Selling</p>
             </div>
         </div>
-        <!-- Add Items Control Center -->
+        <!-- Admin Add Grocery Product Controls Layout -->
         <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800/80 mb-4">
-            <p class="font-bold text-slate-400 text-[10px] mb-2 uppercase tracking-wider">Add New Product In Menu</p>
-            <div class="grid grid-cols-12 gap-2 mb-2">
-                <input id="new-i" placeholder="🍏" class="col-span-2 p-2 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs outline-none text-white">
-                <input id="new-n" placeholder="Item Name (e.g. Sugar Premium 1kg)" class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-xl text-xs outline-none text-white">
-                <input id="new-p" type="number" placeholder="₹ Price" class="col-span-3 p-2 bg-slate-900 border border-slate-800 rounded-xl text-xs outline-none text-white">
+            <p class="font-bold text-slate-400 text-[9px] mb-2 uppercase tracking-wider">Stock Control Form</p>
+            <div class="grid grid-cols-12 gap-1.5 mb-2">
+                <input id="new-i" placeholder="🍏" class="col-span-2 p-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs outline-none text-white">
+                <input id="new-n" placeholder="Product details (e.g. Fortune Oil 1L)" class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-white">
+                <input id="new-p" type="number" placeholder="Price" class="col-span-3 p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-white">
             </div>
-            <div class="grid grid-cols-12 gap-2">
-                <select id="new-cat" class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-xl text-xs outline-none text-slate-300">
-                    <option value="All">📂 Select Category</option>
+            <div class="grid grid-cols-12 gap-1.5">
+                <select id="new-cat" class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs outline-none text-slate-400">
+                    <option value="All">📂 Choose Category</option>
                     <option value="Snacks">🍟 Snacks</option>
                     <option value="Meals">🍱 Meals</option>
                     <option value="Drinks">🥤 Drinks</option>
                     <option value="Sweets">🍮 Sweets</option>
                     <option value="Other">🍽️ Other</option>
                 </select>
-                <button onclick="addProductToMenu()" class="col-span-5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl tracking-wider uppercase">Add +</button>
+                <button onclick="commitNewProductToDatabase()" class="col-span-5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg tracking-wider uppercase">Save Product</button>
             </div>
-            <div id="admin-menu-list" class="space-y-2 max-h-44 overflow-y-auto mt-4 pr-1 scroll-hide"></div>
+            <div id="admin-menu-list" class="space-y-1.5 max-h-40 overflow-y-auto mt-3 pr-1 scroll-hide"></div>
         </div>
 
-        <!-- Live Orders Panel Queue inside Admin Control Container -->
-        <div class="border-t border-slate-800 pt-4">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-xs text-slate-300 flex items-center gap-1"><i class="fa-solid fa-circle-dot text-emerald-500 animate-pulse"></i> Live Incoming Orders Queue</h3>
-                <span id="pending-badge" class="bg-rose-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">0 Pending</span>
-            </div>
-            <div id="admin-orders-list" class="space-y-3 max-h-72 overflow-y-auto pr-1 scroll-hide"></div>
+        <!-- Live Orders Dynamic Queue Pipeline Stack -->
+        <div class="border-t border-slate-800 pt-3">
+            <p class="font-bold text-slate-300 text-xs mb-2 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Grocery Shipments Queue</p>
+            <div id="admin-orders-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 scroll-hide"></div>
         </div>
     </div>
-    <!-- Live Adaptive Unified Search Block with voice integration -->
+
+    <!-- Redesigned Search Input Node Frame with Voice recognition module hooks -->
     <div class="relative mb-5 flex gap-2">
         <div class="relative flex-1">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-            <input id="search-input" oninput="renderGroceryMenu()" placeholder="Item ka naam search karein..." class="w-full py-3 pl-11 pr-11 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl font-medium text-xs shadow-sm outline-none focus:border-emerald-500 transition-colors">
-            <button onclick="startVoiceRecognition()" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-gray-50 dark:bg-slate-800 border text-gray-500 dark:text-gray-400 rounded-lg flex items-center justify-center hover:text-emerald-500"><i class="fa-solid fa-microphone text-xs" id="voice-icon"></i></button>
+            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input id="search-input" oninput="renderCustomerGroceryCatalogueGrid()" placeholder="Aata, Daal, Chawal ya kuch bhi dhoondhein..." class="w-full py-3 pl-10 pr-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-xs shadow-sm outline-none focus:border-emerald-500 transition-colors">
+            <button onclick="executeVoiceSearchChannelPipeline()" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-slate-50 dark:bg-slate-800 border text-slate-400 rounded-lg flex items-center justify-center hover:text-emerald-500"><i class="fa-solid fa-microphone text-xs" id="mic-node-icon"></i></button>
         </div>
     </div>
 
-    <!-- Reactive Filter Tabs Header -->
-    <div id="cat-tabs" class="flex gap-2 overflow-x-auto pb-2 mb-4 scroll-hide"></div>
+    <!-- Category Pill Filter Grid System Elements Layer Node -->
+    <div id="cat-tabs" class="flex gap-1.5 overflow-x-auto pb-2 mb-5 scroll-hide"></div>
 
-    <!-- Primary Retail Menu Layout Dynamic Box -->
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xs font-black text-gray-500 dark:text-gray-400 tracking-wider uppercase">Grocery Catalogue</h2>
-        <span class="w-16 h-0.5 bg-emerald-500 rounded"></span>
+    <!-- Primary Catalog Header Label Grid Layout Matrix Wrapper -->
+    <div class="flex justify-between items-center mb-4 border-b border-slate-200/60 dark:border-slate-800/80 pb-2">
+        <h2 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">E-Commerce Shelf Catalogue</h2>
     </div>
-    <div id="menu-box" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+    <div id="menu-box" class="grid grid-cols-2 gap-3"></div>
 </div>
-
-<!-- Floating Multi Counter Shopping Drawer Container -->
-<div id="floating-cart" class="fixed bottom-5 left-4 right-4 max-w-2xl mx-auto z-40 transition-all duration-300 translate-y-36">
-    <div onclick="openCheckoutSheet()" class="bg-gradient-to-r from-emerald-600 to-teal-600 p-3.5 rounded-2xl shadow-xl flex justify-between items-center text-white cursor-pointer hover:opacity-95 shadow-emerald-950/20">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-sm"><i class="fa-solid fa-bag-shopping"></i></div>
+<!-- Redesigned Minimal Floating Pill Basket Button Interface Node Component -->
+<div id="floating-cart" class="fixed bottom-6 right-4 left-4 max-w-sm mx-auto z-40 transition-all duration-300 translate-y-36">
+    <div onclick="toggleCheckoutDrawerState(true)" class="bg-slate-900 dark:bg-emerald-600 p-3.5 rounded-xl shadow-2xl flex justify-between items-center text-white cursor-pointer hover:opacity-95">
+        <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-basket-shopping text-emerald-400 dark:text-white"></i>
             <div>
-                <p id="float-items" class="text-[10px] font-bold uppercase tracking-wider opacity-85">0 Items Added</p>
-                <p id="float-total" class="text-base font-black leading-none mt-0.5">₹0</p>
+                <p id="float-items" class="text-[9px] font-bold uppercase tracking-wider opacity-75">0 Items</p>
+                <p id="float-total" class="text-sm font-extrabold leading-none mt-0.5">₹0</p>
             </div>
         </div>
-        <div class="flex items-center gap-1 font-bold text-xs bg-black/20 px-3 py-2 rounded-lg uppercase tracking-wide">View Basket <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i></div>
+        <span class="text-[10px] font-bold bg-white/10 px-2.5 py-1.5 rounded-md uppercase tracking-wider">Review Basket <i class="fa-solid fa-arrow-right ml-0.5 text-[8px]"></i></span>
     </div>
 </div>
-<!-- Checkout Bottom Modal Layer System Component Sheet -->
-<div id="checkout-sheet" class="sheet fixed inset-0 z-50 flex flex-col justify-end bg-slate-950/60 backdrop-blur-sm hidden">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl mx-auto rounded-t-[2rem] shadow-2xl flex flex-col max-h-[92vh]">
-        <div class="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-gray-50 dark:bg-slate-900/50 rounded-t-[2rem]">
-            <h3 class="font-extrabold text-base text-gray-800 dark:text-gray-100">Review Items Basket</h3>
-            <button onclick="closeCheckoutSheet()" class="w-8 h-8 bg-white dark:bg-slate-800 border dark:border-slate-700 text-gray-400 rounded-full flex items-center justify-center shadow-sm"><i class="fa-solid fa-xmark text-xs"></i></button>
-        </div>
-        <div class="p-4 overflow-y-auto space-y-4 scroll-hide">
-            <div class="bg-gray-50 dark:bg-slate-950/40 p-3.5 rounded-xl border dark:border-slate-800">
-                <div id="cart-summary" class="space-y-3 mb-3 max-h-44 overflow-y-auto scroll-hide"></div>
-                <div class="flex justify-between items-center border-t dark:border-slate-800 pt-3 font-extrabold text-xs uppercase tracking-wide text-gray-500">
-                    <span>Grand Total Bill</span>
-                    <span id="sheet-total" class="text-emerald-600 dark:text-emerald-400 text-base font-black">₹0</span>
-                </div>
-            </div>
 
-            <!-- Address Slot Multi Storage Nodes Panel -->
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Saved Delivery Location Slots</p>
-                <div id="address-slots-container" class="flex gap-2 overflow-x-auto pb-1 scroll-hide"></div>
-            </div>
-
-            <!-- Client Form Delivery Parameters Entry Matrix -->
-            <div class="space-y-2.5">
-                <input id="u-n" placeholder="Customer Full Name *" class="w-full p-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none focus:border-emerald-500 text-gray-800 dark:text-gray-200">
-                <input id="u-p" type="tel" placeholder="Active Mobile Number *" class="w-full p-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none focus:border-emerald-500 text-gray-800 dark:text-gray-200">
-                
-                <div class="relative">
-                    <input id="u-a" placeholder="Complete Home Delivery Address / Slot Description *" class="w-full p-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none focus:border-emerald-500 text-gray-800 dark:text-gray-200">
-                    <button onclick="saveCurrentAddressSlot()" type="button" class="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 font-bold text-[9px] px-2.5 py-1.5 rounded-lg border dark:border-emerald-900/40 tracking-wider uppercase">Save Location</button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="u-t" class="p-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl font-semibold text-xs text-gray-600 dark:text-slate-400 outline-none">
-                        <option>15 मिनट में</option>
-                        <option>30 मिनट में</option>
-                        <option>45 मिनट में</option>
-                        <option>On The Shop</option>
-                    </select>
-                    <select id="u-pay" class="p-3 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-xl font-bold text-xs outline-none">
-                        <option value="COD">💵 Cash on Delivery (COD)</option>
-                        <option value="PAID">📱 QR Code (Online Pay)</option>
-                    </select>
-                </div>
+<!-- Redesigned Slide-up Drawer UI Architecture System Component Layer Frame -->
+<div id="checkout-sheet" class="modern-drawer max-w-2xl mx-auto dark:bg-slate-900 border border-t-slate-200 dark:border-slate-800">
+    <div class="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/40 rounded-t-3xl">
+        <h3 class="font-extrabold text-sm text-slate-800 dark:text-slate-200">Review Basket Summary</h3>
+        <button onclick="toggleCheckoutDrawerState(false)" class="w-7 h-7 bg-white dark:bg-slate-800 border dark:border-slate-700 text-slate-400 rounded-full flex items-center justify-center shadow-sm"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <div class="p-4 overflow-y-auto space-y-4 max-h-[75vh] scroll-hide">
+        <div class="bg-slate-50 dark:bg-slate-950/40 p-3 rounded-xl border dark:border-slate-800">
+            <div id="cart-summary" class="space-y-2 mb-2.5 max-h-36 overflow-y-auto scroll-hide"></div>
+            <div class="flex justify-between items-center border-t dark:border-slate-800 pt-2 font-bold text-xs text-slate-400 uppercase tracking-wider">
+                <span>Total Items Bill</span>
+                <span id="sheet-total" class="text-emerald-600 dark:text-emerald-400 text-base font-black">₹0</span>
             </div>
         </div>
-        <div class="p-4 bg-white dark:bg-slate-900 border-t dark:border-slate-800">
-            <button onclick="processFinalOrderGateway()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold py-3.5 rounded-xl text-xs tracking-widest uppercase shadow-lg shadow-emerald-900/20">Confirm & Place Order 🚀</button>
+
+        <!-- Address Slots node multi node framework layout mapping -->
+        <div>
+            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Saved Delivery Locations</p>
+            <div id="address-slots-container" class="flex gap-1.5 overflow-x-auto pb-1 scroll-hide"></div>
+        </div>
+        <!-- Client Delivery Parameters Form Inputs Stack Element -->
+        <div class="space-y-2">
+            <input id="u-n" placeholder="Customer Full Name *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
+            <input id="u-p" type="tel" placeholder="Mobile Number *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
+            
+            <div class="relative">
+                <input id="u-a" placeholder="Complete Home Delivery Address *" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-medium text-xs outline-none focus:border-emerald-500 dark:text-white">
+                <button onclick="commitNewLocationSlotToStorage()" type="button" class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 border dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-[8px] px-2 py-1 rounded uppercase">Save Slot</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <select id="u-t" class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-semibold text-xs text-slate-500 dark:text-slate-400 outline-none">
+                    <option>15 मिनट में</option>
+                    <option>30 मिनट में</option>
+                    <option>45 मिनट में</option>
+                    <option>On The Shop</option>
+                </select>
+                <select id="u-pay" class="p-2.5 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-400 rounded-lg font-bold text-xs outline-none">
+                    <option value="COD">💵 Cash on Delivery (COD)</option>
+                    <option value="PAID">📱 QR Code (Online Pay)</option>
+                </select>
+            </div>
         </div>
     </div>
+    <div class="p-4 bg-white dark:bg-slate-900 border-t dark:border-slate-800">
+        <button onclick="evaluateCheckoutGatewayPipeline()" class="w-full bg-emerald-600 text-white font-extrabold py-3 rounded-lg text-xs tracking-wider uppercase shadow-md">Confirm Grocery Dispatch Order 🚀</button>
+    </div>
 </div>
-<!-- Modern Payment QR Modal -->
+
+<!-- Modern UPI Scan QR Modal Window Frame Node -->
 <div id="qr-modal" class="hidden fixed inset-0 bg-slate-950/90 z-[6000] flex items-center justify-center p-5 text-center backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-xs w-full shadow-2xl border dark:border-slate-800">
-        <h3 class="font-extrabold text-base text-emerald-600 dark:text-emerald-400 tracking-tight uppercase">ONLINE UPI MERCHANT PAYMENT</h3>
-        <p class="text-[10px] text-gray-400 font-bold mb-4">QR scan karke secure payment complete karein</p>
-        <img src="https://i.ibb.co/chqR1YGg/IMG-20260513-WA0001.jpg" class="w-full rounded-2xl border dark:border-slate-800 mb-5 shadow-inner bg-white" alt="Payment Merchant QR Layer Node">
-        <button onclick="writeOrderToFirebase('PAID')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs tracking-wider uppercase shadow-md">✅ Payment Done Successfully</button>
-        <button onclick="document.getElementById('qr-modal').classList.add('hidden')" class="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-3.5 block mx-auto hover:text-gray-600">Cancel Checkout</button>
+    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 max-w-xs w-full shadow-2xl border dark:border-slate-800">
+        <h3 class="font-extrabold text-sm text-slate-800 dark:text-white tracking-tight uppercase">UPI Merchant Checkout Gate</h3>
+        <p class="text-[9px] text-slate-400 font-bold mb-3">Scan code using any UPI App to process transaction</p>
+        <img src="https://i.ibb.co/chqR1YGg/IMG-20260513-WA0001.jpg" class="w-full rounded-xl border dark:border-slate-800 mb-4 p-0.5 bg-white shadow-inner" alt="UPI Merchant Payload Node Structure Element">
+        <button onclick="writeOrderPayloadToFirebaseRTDB('PAID')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wide uppercase">✅ Payment Completed Done</button>
+        <button onclick="document.getElementById('qr-modal').classList.add('hidden')" class="text-slate-400 font-bold text-[9px] uppercase tracking-widest mt-3 block mx-auto hover:text-slate-600">Cancel Payment</button>
     </div>
 </div>
-
-<!-- Live Multi-State Animated Order Status Tracking Pipeline Component UI Layer Container Element Node -->
+<!-- Live Tracking Pipeline Status Stream Modal Frame Element Node Component Layer Grid -->
 <div id="tracker-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[4000] flex items-end justify-center">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-[2rem] p-4 max-h-[85vh] flex flex-col">
-        <div class="flex justify-between items-center mb-4 border-b dark:border-slate-800 pb-2">
-            <h3 class="font-extrabold text-sm text-gray-800 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-route text-emerald-600"></i> Live Delivery Progress Tracker</h3>
-            <button onclick="closeModalNode('tracker-modal')" class="w-7 h-7 bg-gray-100 dark:bg-slate-800 text-gray-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl p-4 max-h-[85vh] flex flex-col">
+        <div class="flex justify-between items-center mb-3 border-b dark:border-slate-800 pb-2">
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-route text-emerald-600"></i> Track Grocery Order Progress</h3>
+            <button onclick="closeGlobalModalContainer('tracker-modal')" class="w-7 h-7 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         </div>
-        <div class="flex gap-2 mb-4">
-            <input id="track-phone" type="tel" placeholder="Enter mobile number to track status" class="flex-1 p-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none text-gray-800 dark:text-gray-200">
-            <button onclick="executeOrderTrackingLoop()" class="px-5 bg-emerald-600 text-white font-bold rounded-xl text-xs uppercase tracking-wide">Track</button>
+        <div class="flex gap-1.5 mb-4">
+            <input id="track-phone" type="tel" placeholder="Enter registered phone number to track" class="flex-1 p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none text-slate-800 dark:text-white">
+            <button onclick="executeOrderTrackingSyncEngine()" class="px-4 bg-emerald-600 text-white font-bold rounded-lg text-xs uppercase tracking-wide">Sync</button>
         </div>
-        <div id="track-result" class="overflow-y-auto scroll-hide space-y-4"></div>
+        <div id="track-result" class="overflow-y-auto scroll-hide space-y-3"></div>
     </div>
 </div>
 
-<!-- Historic Transactions Log Record Modal Panel Wrapper View Node -->
+<!-- Customer History Logs Database View Popup Frame Node -->
 <div id="history-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[4000] flex items-end justify-center">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-[2rem] p-4 max-h-[85vh] flex flex-col">
-        <div class="flex justify-between items-center mb-4 border-b dark:border-slate-800 pb-2">
-            <h3 class="font-extrabold text-sm text-gray-800 dark:text-gray-100 flex items-center gap-1.5"><i class="fa-solid fa-receipt text-indigo-500"></i> Your Orders History Logs</h3>
-            <button onclick="closeModalNode('history-modal')" class="w-7 h-7 bg-gray-100 dark:bg-slate-800 text-gray-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl p-4 max-h-[85vh] flex flex-col">
+        <div class="flex justify-between items-center mb-3 border-b dark:border-slate-800 pb-2">
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-receipt text-indigo-500"></i> Completed Transactions Log</h3>
+            <button onclick="closeGlobalModalContainer('history-modal')" class="w-7 h-7 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         </div>
-        <div class="flex gap-2 mb-4">
-            <input id="history-phone" type="tel" placeholder="Enter mobile number to load history" class="flex-1 p-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none text-gray-800 dark:text-gray-200">
-            <button onclick="loadUserOrderHistoryLogs()" class="px-5 bg-indigo-600 text-white font-bold rounded-xl text-xs uppercase tracking-wide">Load</button>
+        <div class="flex gap-1.5 mb-4">
+            <input id="history-phone" type="tel" placeholder="Enter phone number to fetch historic data" class="flex-1 p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-xs outline-none text-slate-800 dark:text-white">
+            <button onclick="fetchCompletedUserHistoryLogs()" class="px-4 bg-indigo-600 text-white font-bold rounded-lg text-xs uppercase tracking-wide">Fetch</button>
         </div>
-        <div id="history-result" class="overflow-y-auto scroll-hide space-y-2.5"></div>
+        <div id="history-result" class="overflow-y-auto scroll-hide space-y-2"></div>
     </div>
 </div>
-<!-- Hidden Clean Target DOM Node block structured strictly explicitly for rendering daily printable clean invoices/reports PDF engine configurations -->
+<!-- Hidden Document Template Target Container strictly mapped explicitly for computing professional clean reports export arrays -->
 <div style="display:none;">
     <div id="pdf-report-template" class="p-8 font-sans text-gray-900 bg-white">
         <div class="text-center border-b pb-4 mb-4">
-            <h1 class="text-2xl font-black uppercase tracking-tight">Balaji Variety Store</h1>
-            <p class="text-xs text-gray-500">Daily Sales Ledger Report Summary Sheet</p>
-            <p class="text-[10px] text-gray-400 mt-1 uppercase">Generated on: <span id="pdf-timestamp"></span></p>
+            <h1 class="text-xl font-extrabold uppercase tracking-tight">Balaji Variety Store</h1>
+            <p class="text-[11px] text-gray-500">Daily Sales Ledger Report Summary Sheet</p>
+            <p class="text-[9px] text-gray-400 mt-0.5 uppercase">Generated Matrix Sequence: <span id="pdf-timestamp"></span></p>
         </div>
-        <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-xl text-xs">
-            <div><p class="font-bold text-gray-500">Total Complete Sales Turnover:</p><p id="pdf-rev-node" class="text-lg font-black text-emerald-600">₹0</p></div>
-            <div><p class="font-bold text-gray-500">Gross Orders Transactions volume:</p><p id="pdf-count-node" class="text-lg font-black text-blue-600">0</p></div>
+        <div class="grid grid-cols-2 gap-4 mb-5 bg-gray-50 p-4 rounded-xl text-xs">
+            <div><p class="font-bold text-gray-400 uppercase tracking-wide text-[9px]">Gross Completed Sales:</p><p id="pdf-rev-node" class="text-base font-black text-emerald-600">₹0</p></div>
+            <div><p class="font-bold text-gray-400 uppercase tracking-wide text-[9px]">Gross Transactions Volume:</p><p id="pdf-count-node" class="text-base font-black text-blue-600">0</p></div>
         </div>
-        <table class="w-full text-left text-xs border-collapse">
+        <table class="w-full text-left text-[11px] border-collapse">
             <thead>
-                <tr class="bg-gray-100 text-gray-600 uppercase text-[9px] tracking-wider border-b"><th class="p-2">Customer</th><th class="p-2">Phone</th><th class="p-2">Items Breakdown</th><th class="p-2">Total Paid</th></tr>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-[8px] tracking-wider border-b"><th class="p-2">Customer</th><th class="p-2">Mobile Number</th><th class="p-2">Items Matrix Description</th><th class="p-2">Gross Total</th></tr>
             </thead>
             <tbody id="pdf-table-body" class="divide-y"></tbody>
         </table>
     </div>
 </div>
 
-<!-- Master Core Business Logic Engine JavaScript Architecture Block Execution Layer Node Components Tree -->
+<!-- Master Core Application Logical Engine Node Script Execution Frame Tree -->
 <script>
-    // Configuration Injection Object
-    const STORE_CONFIG = {
-        storeNumber: "8058733741",
-        adminSecretPin: "8087jitu"
+    // FIX COMPONENT: Naya Correct Configurations Object System Mapped Exactly 
+    const MASTER_STORE_CONFIG = {
+        storeNumber: "917740969279", // Appended correct target recipient gateway node payload phone matrix string
+        adminSecretPin: "Pardeep@Tailor" // FIX: Updated correct requested custom password pin lock key sequence node
     };
 
-    // Naye Config Data Variable Injection Payload
+    // Firebase Data Configuration Node Injection Payload Object Structure 
     const firebaseConfig = {
       apiKey: "AIzaSyCLRVn9LE5NFnbc3-_dDKG50L8CqLl_k1I",
       authDomain: "balaji-variety-store.firebaseapp.com",
@@ -315,37 +310,35 @@
 
     const menuCategoriesArray = ["All", "Snacks", "Meals", "Drinks", "Sweets", "Other"];
 
-    // Initialize Sync Loops 
     window.addEventListener('DOMContentLoaded', () => {
         initThemeEngine();
         initPWAInstallationPromptEngine();
         initSavedAddressSlots();
         
-        // Listeners
         rdb.ref('shop_status').on('value', snap => {
             isStoreCurrentlyOpen = (snap.val() !== false);
             document.getElementById('closed-screen').style.display = isStoreCurrentlyOpen ? 'none' : 'flex';
-            document.getElementById('status-indicator-dot').className = `w-1.5 h-1.5 rounded-full ${isStoreCurrentlyOpen ? 'bg-emerald-500' : 'bg-rose-500'}`;
-            document.getElementById('status-indicator-text').innerText = isStoreCurrentlyOpen ? 'ONLINE | ⚡ FAST DELIVERY' : 'STORE CLOSED';
+            document.getElementById('status-dot').className = `w-1.5 h-1.5 rounded-full ${isStoreCurrentlyOpen ? 'bg-emerald-500' : 'bg-rose-500'}`;
+            document.getElementById('status-text').innerText = isStoreCurrentlyOpen ? 'ONLINE | Fast Delivery' : 'STORE CLOSED';
             
             const btn = document.getElementById('toggle-shop-btn');
             if(btn) {
-                btn.innerText = isStoreCurrentlyOpen ? "🔴 Close Live Store" : "🟢 Open Store Live";
-                btn.className = isStoreCurrentlyOpen ? "w-full py-2 rounded-xl font-black bg-rose-600 hover:bg-rose-500 text-white shadow text-xs uppercase" : "w-full py-2 rounded-xl font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow text-xs uppercase";
+                btn.innerText = isStoreCurrentlyOpen ? "🔴 Close Live Store Node" : "🟢 Open Store Live";
+                btn.className = isStoreCurrentlyOpen ? "w-full py-2 rounded-lg font-bold bg-rose-600 text-white text-xs uppercase shadow-sm" : "w-full py-2 rounded-lg font-bold bg-emerald-600 text-white text-xs uppercase shadow-sm";
             }
         });
 
         rdb.ref('menu').on('value', snap => {
             localGroceryMenuData = snap.val() || {};
             renderFilterTabs();
-            renderGroceryMenu();
+            renderCustomerGroceryCatalogueGrid();
             renderAdminMenuControlList();
         });
 
         rdb.ref('orders').on('value', snap => {
             const data = snap.val() || {};
             if (initialSyncCompleted) {
-                document.getElementById('order-alert-sound').play().catch(e => console.log('Sound trigger muted'));
+                document.getElementById('order-alert-sound').play().catch(e => console.log('Audio muted by local browser rules'));
                 triggerWebPushNotificationAlertCard();
             } else {
                 initialSyncCompleted = true;
@@ -354,18 +347,19 @@
             recalculateStoreStatsMetrics(data);
         });
     });
-    // Theme Engine
+</script>
+<script>
     function initThemeEngine() {
         if (localStorage.getItem('dark-theme') === 'true') {
             document.documentElement.classList.add('dark');
-            document.getElementById('dark-icon').className = "fa-solid fa-sun";
+            document.getElementById('theme-toggle-icon').className = "fa-solid fa-sun";
         }
     }
 
-    function toggleDarkMode() {
+    function toggleDarkModeTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('dark-theme', isDark);
-        document.getElementById('dark-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+        document.getElementById('theme-toggle-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
     }
 
     let deferredPWAInstallPrompt;
@@ -389,7 +383,7 @@
 
     function triggerWebPushNotificationAlertCard() {
         if (Notification.permission === "granted") {
-            new Notification("Balaji Variety Store", { body: "🚨 Naya order aaya hai! Check Admin Panel.", icon: "🛒" });
+            new Notification("Balaji Variety Store", { body: "🚨 Naya grocery order aaya hai! Check admin control panel.", icon: "🛒" });
         } else if (Notification.permission !== "denied") {
             Notification.requestPermission();
         }
@@ -399,7 +393,7 @@
         const catBox = document.getElementById('cat-tabs');
         if (!catBox) return;
         catBox.innerHTML = menuCategoriesArray.map(cat => `
-            <button onclick="setActiveCategoryTab('${cat}')" class="px-4 py-2 rounded-xl font-bold text-xs border border-gray-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-500 dark:text-slate-400 whitespace-nowrap transition-all ${activeCategoryTab === cat ? 'tab-active shadow-sm text-white dark:text-white' : ''}">
+            <button onclick="setActiveCategoryTab('${cat}')" class="px-3.5 py-1.5 rounded-lg font-bold text-[11px] border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 whitespace-nowrap transition-all ${activeCategoryTab === cat ? 'active-pill-tab' : ''}">
                 ${cat}
             </button>
         `).join('');
@@ -408,9 +402,10 @@
     function setActiveCategoryTab(cat) {
         activeCategoryTab = cat;
         renderFilterTabs();
-        renderGroceryMenu();
+        renderCustomerGroceryCatalogueGrid();
     }
-    function renderGroceryMenu() {
+    // REDESIGNED: Premium Clean Grid Shelf UI Component rendering sequence engine loop hook
+    function renderCustomerGroceryCatalogueGrid() {
         const box = document.getElementById('menu-box');
         if (!box) return;
         const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
@@ -418,63 +413,63 @@
 
         const keys = Object.keys(localGroceryMenuData);
         if (keys.length === 0) {
-            box.innerHTML = '<div class="col-span-full bg-white dark:bg-slate-900 rounded-2xl border dark:border-slate-800 p-8 text-center text-xs font-semibold text-gray-400">Menu ekdum khali hai! Admin panel se items add karein.</div>';
+            box.innerHTML = '<div class="col-span-full bg-white dark:bg-slate-900 rounded-xl border dark:border-slate-800 p-6 text-center text-xs font-semibold text-slate-400">Shelf catalogue khali hai. Admin dashboard se items live add karein!</div>';
             return;
         }
 
-        let renderedCount = 0;
+        let count = 0;
         keys.forEach(id => {
             const item = localGroceryMenuData[id];
             if (activeCategoryTab !== "All" && item.category !== activeCategoryTab) return;
             if (searchVal && !item.name.toLowerCase().includes(searchVal)) return;
 
-            renderedCount++;
+            count++;
             const isAvail = item.available !== false;
             const inCartObject = activeCustomerCart.find(c => c.name === item.name);
             
-            let ctaMarkup = '';
+            let actionMarkup = '';
             if (!isAvail) {
-                ctaMarkup = `<span class="text-[9px] tracking-wider font-extrabold text-gray-400 dark:text-slate-500 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-md uppercase">OUT</span>`;
+                actionMarkup = `<span class="text-[9px] tracking-wider font-extrabold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded uppercase block text-center w-full">Out of Stock</span>`;
             } else if (inCartObject) {
-                ctaMarkup = `
-                <div class="flex items-center gap-2 bg-emerald-600 text-white rounded-xl p-1 shadow-sm">
-                    <button onclick="decrementItemQuantityCounter('${item.name}')" class="w-6 h-6 flex items-center justify-center font-black text-xs hover:bg-white/10 rounded-lg transition-colors">-</button>
-                    <span class="text-xs font-bold w-4 text-center">${inCartObject.qty}</span>
-                    <button onclick="incrementItemQuantityCounter('${item.name}')" class="w-6 h-6 flex items-center justify-center font-black text-xs hover:bg-white/10 rounded-lg transition-colors">+</button>
+                actionMarkup = `
+                <div class="flex items-center justify-between bg-emerald-600 text-white rounded-lg p-1 w-full shadow-sm">
+                    <button onclick="decrementItemQuantityCounter('${item.name}')" class="w-5 h-5 flex items-center justify-center font-bold text-xs hover:bg-white/10 rounded">-</button>
+                    <span class="text-xs font-bold">${inCartObject.qty}</span>
+                    <button onclick="incrementItemQuantityCounter('${item.name}')" class="w-5 h-5 flex items-center justify-center font-bold text-xs hover:bg-white/10 rounded">+</button>
                 </div>`;
             } else {
-                ctaMarkup = `<button onclick="pushToBasketNode('${item.name.replace(/'/g, "")}', ${item.price})" class="bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 px-4 py-1.5 rounded-xl text-xs font-extrabold hover:bg-emerald-600 hover:text-white transition-all">ADD</button>`;
+                actionMarkup = `<button onclick="pushToBasketNode('${item.name.replace(/'/g, "")}', ${item.price})" class="w-full bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 py-1 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all uppercase tracking-wide">Add To Cart</button>`;
             }
 
             box.innerHTML += `
-            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl flex justify-between items-center border border-gray-100 dark:border-slate-800 shadow-sm ${isAvail ? '' : 'opacity-50 grayscale'}">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 bg-gray-50 dark:bg-slate-950 rounded-xl flex items-center justify-center text-lg border border-gray-100 dark:border-slate-800/60">${item.icon || '🍏'}</div>
-                    <div>
-                        <p class="font-bold text-gray-800 dark:text-gray-200 text-xs sm:text-sm leading-tight">${item.name}</p>
-                        <p class="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs mt-1">₹${item.price}</p>
-                    </div>
+            <div class="premium-grocery-card dark:bg-slate-900 dark:border-slate-800 p-3 flex flex-col justify-between min-h-[140px]">
+                <div>
+                    <div class="w-9 h-9 bg-slate-50 dark:bg-slate-950 rounded-lg flex items-center justify-center text-base border dark:border-slate-800">${item.icon || '🍏'}</div>
+                    <p class="font-bold text-slate-800 dark:text-slate-200 text-xs mt-2 leading-snug truncate">${item.name}</p>
                 </div>
-                <div>${ctaMarkup}</div>
+                <div class="mt-3">
+                    <p class="text-slate-900 dark:text-white font-extrabold text-sm mb-1.5">₹${item.price}</p>
+                    ${actionMarkup}
+                </div>
             </div>`;
         });
 
-        if(renderedCount === 0 && searchVal) {
-            box.innerHTML = '<p class="col-span-full text-center text-gray-400 py-6 text-xs font-medium">Dhoonda hua product menu me nahi mila.</p>';
+        if(count === 0 && searchVal) {
+            box.innerHTML = '<p class="col-span-full text-center text-slate-400 py-4 text-xs font-medium">Shelf catalog me aisa koi matching item nahi hai.</p>';
         }
     }
 
     function pushToBasketNode(name, price) {
         activeCustomerCart.push({ name, price, qty: 1 });
         updateGlobalBasketCounters();
-        renderGroceryMenu();
+        renderCustomerGroceryCatalogueGrid();
     }
 
     function incrementItemQuantityCounter(name) {
         const item = activeCustomerCart.find(c => c.name === name);
         if(item) item.qty++;
         updateGlobalBasketCounters();
-        renderGroceryMenu();
+        renderCustomerGroceryCatalogueGrid();
     }
 
     function decrementItemQuantityCounter(name) {
@@ -486,8 +481,9 @@
             }
         }
         updateGlobalBasketCounters();
-        renderGroceryMenu();
+        renderCustomerGroceryCatalogueGrid();
     }
+
     function updateGlobalBasketCounters() {
         let totalBillValue = 0, itemsVolumeCounter = 0;
         activeCustomerCart.forEach(i => {
@@ -505,73 +501,56 @@
         const summaryBox = document.getElementById('cart-summary');
         if(summaryBox) {
             summaryBox.innerHTML = activeCustomerCart.map(i => `
-                <div class="flex justify-between items-center text-xs font-bold text-gray-700 dark:text-gray-300">
-                    <div class="w-1/2"><span>${i.name}</span></div>
-                    <div class="w-1/4 text-center text-gray-400"><span>₹${i.price} x ${i.qty}</span></div>
-                    <div class="w-1/4 text-right"><span class="text-gray-900 dark:text-white">₹${i.price * i.qty}</span></div>
+                <div class="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <span class="truncate w-1/2">${i.name}</span>
+                    <span class="text-slate-400 text-[10px]">₹${i.price} x ${i.qty}</span>
+                    <span class="text-slate-900 dark:text-white font-extrabold">₹${i.price * i.qty}</span>
                 </div>
             `).join('');
         }
         document.getElementById('sheet-total').innerText = `₹${totalBillValue}`;
     }
 
-    function openCheckoutSheet() { 
-        const element = document.getElementById('checkout-sheet');
-        element.classList.remove('hidden');
-        setTimeout(() => element.classList.add('active'), 10);
-    }
-    
-    function closeCheckoutSheet() { 
-        const element = document.getElementById('checkout-sheet');
-        element.classList.remove('active');
-        setTimeout(() => element.classList.add('hidden'), 400);
-    }
-
-    function startVoiceRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Aapka browser Voice Search support nahi karta.");
-            return;
+    function toggleCheckoutDrawerState(openFlag) {
+        const drawer = document.getElementById('checkout-sheet');
+        if(openFlag) {
+            drawer.classList.remove('hidden');
+            setTimeout(() => drawer.classList.add('active'), 10);
+        } else {
+            drawer.classList.remove('active');
+            setTimeout(() => drawer.classList.add('hidden'), 400);
         }
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'hi-IN'; 
-        const micIcon = document.getElementById('voice-icon');
+    }
 
-        recognition.onstart = () => {
-            micIcon.className = "fa-solid fa-microphone text-rose-500 animate-ping text-xs";
-        };
+    function executeVoiceSearchChannelPipeline() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) { alert("Voice search array not supported by this browser client."); return; }
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'hi-IN';
+        const micIcon = document.getElementById('mic-node-icon');
+
+        recognition.onstart = () => { micIcon.className = "fa-solid fa-microphone text-rose-500 animate-pulse text-xs"; };
         recognition.onresult = (event) => {
-            const textResult = event.results[0][0].transcript;
-            const cleanQuery = textResult.replace(/[.।]/g, '').trim();
-            document.getElementById('search-input').value = cleanQuery;
-            renderGroceryMenu();
+            const resultString = event.results[0][0].transcript.replace(/[.।]/g, '').trim();
+            document.getElementById('search-input').value = resultString;
+            renderCustomerGroceryCatalogueGrid();
         };
-        recognition.onend = () => {
-            micIcon.className = "fa-solid fa-microphone text-xs";
-        };
+        recognition.onend = () => { micIcon.className = "fa-solid fa-microphone text-xs"; };
         recognition.start();
     }
-
     function initSavedAddressSlots() {
         const slots = JSON.parse(localStorage.getItem('address_slots') || '[]');
         const container = document.getElementById('address-slots-container');
         if(!container) return;
-        
-        if(slots.length === 0) {
-            container.innerHTML = '<span class="text-[10px] text-gray-400 font-medium">Koi saved location nahi hai.</span>';
-            return;
-        }
+        if(slots.length === 0) { container.innerHTML = '<span class="text-[9px] text-slate-400 font-medium">No saved location tags.</span>'; return; }
         container.innerHTML = slots.map((addr, idx) => `
-            <button onclick="applyAddressSlotNode('${addr.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 font-bold text-[10px] rounded-lg border dark:border-slate-700 whitespace-nowrap flex items-center gap-1">
-                <i class="fa-solid fa-location-dot text-emerald-500"></i> Loc ${idx + 1}
-            </button>
+            <button onclick="applyAddressSlotNode('${addr.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-[9px] rounded-md border dark:border-slate-700 whitespace-nowrap"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>Slot ${idx + 1}</button>
         `).join('');
     }
 
-    function saveCurrentAddressSlot() {
+    function commitNewLocationSlotToStorage() {
         const val = document.getElementById('u-a').value.trim();
-        if(!val) { alert('Pehle address box me address likhein!'); return; }
-        
+        if(!val) return;
         let slots = JSON.parse(localStorage.getItem('address_slots') || '[]');
         if(!slots.includes(val)) {
             slots.push(val);
@@ -580,155 +559,93 @@
         }
     }
 
-    function applyAddressSlotNode(addr) {
-        document.getElementById('u-a').value = addr;
+    function applyAddressSlotNode(addr) { document.getElementById('u-a').value = addr; }
+
+    function evaluateCheckoutGatewayPipeline() {
+        if (!document.getElementById('u-n').value || !document.getElementById('u-p').value || !document.getElementById('u-a').value) { alert("Details missing!"); return; }
+        if (document.getElementById('u-pay').value === "PAID") document.getElementById('qr-modal').classList.remove('hidden');
+        else writeOrderPayloadToFirebaseRTDB("COD");
     }
 
-    function processFinalOrderGateway() {
-        if (!document.getElementById('u-n').value || !document.getElementById('u-p').value || !document.getElementById('u-a').value) { 
-            alert("Kripya saari mandatory billing form fields bhariye!"); 
-            return; 
-        }
-        if (document.getElementById('u-pay').value === "PAID") {
-            document.getElementById('qr-modal').classList.remove('hidden');
-        } else {
-            writeOrderToFirebase("COD");
-        }
-    }
-    function writeOrderToFirebase(paymentType) {
-        const name = document.getElementById('u-n').value.trim();
-        const phone = document.getElementById('u-p').value.trim();
-        const address = document.getElementById('u-a').value.trim();
-        const timeChoice = document.getElementById('u-t').value;
+    function writeOrderPayloadToFirebaseRTDB(paymentType) {
+        const name = document.getElementById('u-n').value.trim(), phone = document.getElementById('u-p').value.trim();
+        const address = document.getElementById('u-a').value.trim(), timeChoice = document.getElementById('u-t').value;
 
-        let totalSum = 0;
+        let grandSum = 0;
         let serializedWhatsAppItemsPayload = activeCustomerCart.map(i => {
-            totalSum += (i.price * i.qty);
+            grandSum += (i.price * i.qty);
             return `▫️ ${i.name} [x${i.qty}] - ₹${i.price * i.qty}`;
         }).join('%0A');
 
         rdb.ref('orders').push({
-            customerName: name,
-            customerPhone: phone.replace(/\D/g, ""),
-            address: address,
-            time: timeChoice,
-            items: serializedWhatsAppItemsPayload,
-            total: totalSum,
-            payType: paymentType,
-            status: 'Pending',
-            timestamp: Date.now()
+            customerName: name, customerPhone: phone.replace(/\D/g, ""), address: address,
+            time: timeChoice, items: serializedWhatsAppItemsPayload, total: grandSum, payType: paymentType, status: 'Pending', timestamp: Date.now()
         })
         .then(() => {
-            let messageTemplate = `*नया ऑर्डर: Balaji Variety Store*%0A%0A*ग्राहक:* ${name}%0A*मोबाइल:* ${phone}%0A*पता:* ${address}%0A*समय स्लॉट:* ${timeChoice}%0A*पेमेंट:* ${paymentType}%0A%0A*सामान की सूची:*%0A${serializedWhatsAppItemsPayload}%0A%0A*कुल बिल राशि:* ₹${totalSum}`;
-            let intentUrl = `https://wa.me/91${STORE_CONFIG.storeNumber}?text=${messageTemplate}`;
-            
-            activeCustomerCart = [];
-            updateGlobalBasketCounters();
-            closeCheckoutSheet();
+            let encodedString = `*नया ऑर्डर: Balaji Variety Store*%0A%0A*ग्राहक:* ${name}%0A*मोबाइल:* ${phone}%0A*पता:* ${address}%0A*समय स्लॉट:* ${timeChoice}%0A*पेमेंट:* ${paymentType}%0A%0A*सामान की सूची:*%0A${serializedWhatsAppItemsPayload}%0A%0A*कुल बिल राशि:* ₹${grandSum}`;
+            activeCustomerCart = []; updateGlobalBasketCounters(); toggleCheckoutDrawerState(false);
             document.getElementById('qr-modal').classList.add('hidden');
-            window.location.href = intentUrl;
+            window.location.href = `https://wa.me/${MASTER_STORE_CONFIG.storeNumber}?text=${encodedString}`;
         });
     }
 
-    function loginAdmin() {
-        if (prompt("Secure Gateway Key PIN enter karein:") === STORE_CONFIG.adminSecretPin) {
+    function loginAdminDashboard() {
+        if (prompt("Secure Dashboard PIN enter karein:") === MASTER_STORE_CONFIG.adminSecretPin) {
             document.getElementById('admin-panel').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            alert("Aapka administrative secret gateway key code pin galat hai!");
-        }
+        } else { alert("Administrative Access Denied!"); }
     }
 
-    function toggleShopStatus() {
-        rdb.ref('shop_status').set(!isStoreCurrentlyOpen);
-    }
+    function executeShopStatusToggle() { rdb.ref('shop_status').set(!isStoreCurrentlyOpen); }
 
-    function addProductToMenu() {
-        const nameNode = document.getElementById('new-n').value.trim();
-        const priceNode = document.getElementById('new-p').value.trim();
-        const iconNode = document.getElementById('new-i').value.trim() || "🍏";
-        const categoryNode = document.getElementById('new-cat').value;
+    function commitNewProductToDatabase() {
+        const nameNode = document.getElementById('new-n').value.trim(), priceNode = document.getElementById('new-p').value.trim();
+        const iconNode = document.getElementById('new-i').value.trim() || "🍏", categoryNode = document.getElementById('new-cat').value;
 
         if (nameNode && priceNode && categoryNode !== "All") {
-            rdb.ref('menu').push({
-                name: nameNode,
-                price: parseInt(priceNode),
-                icon: iconNode,
-                category: categoryNode,
-                available: true
-            }).then(() => {
-                document.getElementById('new-n').value = '';
-                document.getElementById('new-p').value = '';
-            });
-        } else {
-            alert("Sahi product details enter karein aur category chunein!");
-        }
+            rdb.ref('menu').push({ name: nameNode, price: parseInt(priceNode), icon: iconNode, category: categoryNode, available: true })
+            .then(() => { document.getElementById('new-n').value = ''; document.getElementById('new-p').value = ''; });
+        } else { alert("Data inputs invalid!"); }
     }
 
     function renderAdminMenuControlList() {
-        const box = document.getElementById('admin-menu-list');
-        if (!box) return;
-        box.innerHTML = '';
-
+        const box = document.getElementById('admin-menu-list'); if (!box) return; box.innerHTML = '';
         Object.keys(localGroceryMenuData).forEach(id => {
-            const item = localGroceryMenuData[id];
-            const isAvail = item.available !== false;
-
+            const item = localGroceryMenuData[id]; const isAvail = item.available !== false;
             box.innerHTML += `
-            <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
-                <span class="w-32 truncate text-slate-300 font-medium">${item.icon || '🍏'} ${item.name}</span>
-                <div class="flex items-center gap-1.5">
-                    <input type="number" value="${item.price}" onchange="rdb.ref('menu/${id}/price').set(parseInt(this.value))" class="w-12 bg-slate-950 border border-slate-800 text-center rounded text-amber-400 font-bold py-0.5 outline-none">
-                    <button onclick="rdb.ref('menu/${id}/available').set(${!isAvail})" class="px-2 py-0.5 text-[9px] font-black rounded text-white ${isAvail ? 'bg-emerald-600' : 'bg-rose-600'}">${isAvail ? 'IN' : 'OUT'}</button>
-                    <button onclick="if(confirm('Product delete karein?')) rdb.ref('menu/${id}').remove()" class="text-rose-400 ml-1"><i class="fa fa-trash"></i></button>
+            <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 flex items-center justify-between text-[11px]">
+                <span class="w-24 truncate text-slate-300">${item.icon || '🍏'} ${item.name}</span>
+                <div class="flex items-center gap-1">
+                    <input type="number" value="${item.price}" onchange="rdb.ref('menu/${id}/price').set(parseInt(this.value))" class="w-10 bg-slate-950 text-center text-amber-400 rounded py-0.5 outline-none border border-slate-800">
+                    <button onclick="rdb.ref('menu/${id}/available').set(${!isAvail})" class="px-1.5 py-0.5 rounded text-white text-[8px] ${isAvail ? 'bg-emerald-600' : 'bg-rose-600'}">${isAvail ? 'IN' : 'OUT'}</button>
+                    <button onclick="if(confirm('Delete?')) rdb.ref('menu/${id}').remove()" class="text-rose-400 ml-0.5"><i class="fa fa-trash"></i></button>
                 </div>
             </div>`;
         });
     }
 
     function renderAdminLiveOrdersDashboardQueue(orders) {
-        const orderList = document.getElementById('admin-orders-list');
-        const badge = document.getElementById('pending-badge');
-        if (!orderList) return;
-        orderList.innerHTML = '';
-        
+        const orderList = document.getElementById('admin-orders-list'); const badge = document.getElementById('pending-badge');
+        if (!orderList) return; orderList.innerHTML = ''; let pendingCount = 0;
         const keys = Object.keys(orders).reverse();
-        let pendingCount = 0;
 
-        if (keys.length === 0) {
-            orderList.innerHTML = '<p class="text-slate-500 text-center text-[11px] py-4">Live tracking channel pool is empty.</p>';
-            if(badge) badge.innerText = "0 Pending";
-            return;
-        }
-
+        if (keys.length === 0) { orderList.innerHTML = '<p class="text-slate-500 text-center text-[10px] py-2">No shipments pending.</p>'; if(badge) badge.innerText = "0 Pending"; return; }
         keys.forEach(id => {
-            const o = orders[id];
-            if (o.status === "Pending") pendingCount++;
-            
-            const formattedTime = new Date(o.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const statusColor = o.status === 'Pending' ? 'text-amber-400' : (o.status === 'Preparing' ? 'text-blue-400' : 'text-emerald-400');
+            const o = orders[id]; if (o.status === "Pending") pendingCount++;
+            const fTime = new Date(o.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const sColor = o.status === 'Pending' ? 'text-amber-400' : (o.status === 'Preparing' ? 'text-blue-400' : 'text-emerald-400');
             const itemString = o.items ? o.items.replace(/%0A/g, '<br>') : '';
 
             orderList.innerHTML += `
-            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-[11px]">
-                <div class="flex justify-between items-start mb-1.5">
-                    <div>
-                        <p class="font-bold text-slate-200 text-xs">${o.customerName}</p>
-                        <p class="text-[9px] text-slate-500 mt-0.5">${formattedTime} | ${o.payType} | 🕒 ${o.time}</p>
-                        <p class="text-[9px] text-emerald-500 mt-0.5"><i class="fa-solid fa-house-chimney text-[7px]"></i> ${o.address}</p>
-                    </div>
-                    <span class="font-bold uppercase text-[9px] tracking-wide ${statusColor}">${o.status}</span>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[10px]">
+                <div class="flex justify-between items-start mb-1">
+                    <div><p class="font-bold text-slate-200">${o.customerName}</p><p class="text-[8px] text-slate-500 mt-0.5">${fTime} | ${o.payType} | 🕒 ${o.time}</p></div>
+                    <span class="font-bold text-[8px] ${sColor}">${o.status}</span>
                 </div>
-                <div class="text-slate-300 text-[10px] mb-2.5 bg-slate-900/60 p-2 rounded-lg border border-slate-800/50 leading-relaxed">${itemString}</div>
-                <div class="flex gap-1.5">
-                    <select onchange="updateOrderStatusStageNode('${id}', this.value, '${o.customerPhone}', '${o.customerName}')" class="flex-1 bg-slate-900 text-slate-300 p-1.5 rounded-lg border border-slate-800 outline-none text-[10px] font-bold">
-                        <option value="">Update Delivery Stage</option>
-                        <option value="Preparing">Preparing / Packing</option>
-                        <option value="Out for Delivery">Out for Delivery</option>
-                        <option value="Completed">Completed Done</option>
-                        <option value="Cancelled">Cancel Order</option>
-                    </select>
-                    <button onclick="window.location.href='https://wa.me/91${o.customerPhone}'" class="bg-emerald-600 px-3 rounded-lg text-white text-xs"><i class="fa-brands fa-whatsapp"></i></button>
+                <div class="text-slate-300 text-[9px] mb-2 bg-slate-900 p-2 rounded leading-relaxed border border-slate-800/60">${itemString}</div>
+                <div class="flex gap-1">
+                    <select onchange="updateOrderStatusStageNode('${id}', this.value, '${o.customerPhone}', '${o.customerName}')" class="flex-1 bg-slate-900 text-slate-300 p-1 rounded text-[9px] border border-slate-800 font-bold outline-none"><option value="">Stage</option><option value="Preparing">Packing</option><option value="Out for Delivery">Dispatched</option><option value="Completed">Delivered</option><option value="Cancelled">Cancel</option></select>
+                    <button onclick="window.location.href='https://wa.me/91${o.customerPhone}'" class="bg-emerald-600 px-2 rounded text-white text-[10px]"><i class="fa-brands fa-whatsapp"></i></button>
                 </div>
             </div>`;
         });
@@ -738,141 +655,69 @@
     function updateOrderStatusStageNode(id, newStatus, phone, name) {
         if (!newStatus) return;
         rdb.ref(`orders/${id}/status`).set(newStatus).then(() => {
-            if (confirm("Grahak ko unke WhatsApp number par stage update alert message bhejein?")) {
-                let text = `Hello ${name}, aapka Balaji Variety Store se mangaya hua grocery order ab *${newStatus}* stage par chal raha hai. Stay tracked!`;
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(text)}`, '_blank');
+            if (confirm("WhatsApp trigger alert?")) {
+                let alertString = `Hello ${name}, aapka Balaji Variety Store order ab *${newStatus}* stage par hai.`;
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(alertString)}`, '_blank');
             }
         });
     }
 
     function recalculateStoreStatsMetrics(orders) {
         let rev = 0, count = 0, counts = {};
-
         Object.keys(orders).forEach(id => {
-            const o = orders[id];
-            count++;
-            if (o.status === "Completed") rev += (o.total || 0);
-            if (o.items) {
-                o.items.split('%0A').forEach(l => {
-                    let cleaned = l.replace(/[▫️\-\s]/g, '').split('[')[0];
-                    if(cleaned) counts[cleaned] = (counts[cleaned] || 0) + 1;
-                });
-            }
+            const o = orders[id]; count++; if (o.status === "Completed") rev += (o.total || 0);
+            if (o.items) { o.items.split('%0A').forEach(l => { let cleaned = l.replace(/[▫️\-\s]/g, '').split('[')[0]; if(cleaned) counts[cleaned] = (counts[cleaned] || 0) + 1; }); }
         });
-
-        let top = "-", max = 0;
-        Object.keys(counts).forEach(n => {
-            if (counts[n] > max) { max = counts[n]; top = n; }
-        });
-
+        let top = "-", max = 0; Object.keys(counts).forEach(n => { if (counts[n] > max) { max = counts[n]; top = n; } });
         if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = `₹${rev}`;
         if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = count;
         if(document.getElementById('stat-top')) document.getElementById('stat-top').innerText = top;
     }
 
-    function generateDailyPDFReport() {
+    function triggerDailySalesPDFReport() {
         rdb.ref('orders').once('value', (snap) => {
-            const orders = snap.val() || {};
-            document.getElementById('pdf-timestamp').innerText = new Date().toLocaleString('en-IN');
-            
+            const orders = snap.val() || {}; document.getElementById('pdf-timestamp').innerText = new Date().toLocaleString('en-IN');
             let revenue = 0, count = 0, rowsHtml = '';
             Object.keys(orders).forEach(id => {
-                const o = orders[id];
-                count++;
-                if(o.status === "Completed") revenue += (o.total || 0);
-                
-                rowsHtml += `
-                    <tr class="text-[10px]">
-                        <td class="p-2 font-bold">${o.customerName}</td>
-                        <td class="p-2">${o.customerPhone}</td>
-                        <td class="p-2 text-gray-500 max-w-xs">${o.items ? o.items.replace(/%0A/g, ', ') : ''}</td>
-                        <td class="p-2 font-bold text-emerald-600">₹${o.total}</td>
-                    </tr>
-                `;
+                const o = orders[id]; count++; if(o.status === "Completed") revenue += (o.total || 0);
+                rowsHtml += `<tr class="text-[10px]"><td class="p-2 font-bold">${o.customerName}</td><td class="p-2">${o.customerPhone}</td><td class="p-2 text-gray-500 max-w-xs">${o.items ? o.items.replace(/%0A/g, ', ') : ''}</td><td class="p-2 font-bold text-emerald-600">₹${o.total}</td></tr>`;
             });
-
-            document.getElementById('pdf-rev-node').innerText = `₹${revenue}`;
-            document.getElementById('pdf-count-node').innerText = count;
-            document.getElementById('pdf-table-body').innerHTML = rowsHtml || '<tr><td colspan="4" class="p-4 text-center text-gray-400">Ledger array is empty today.</td></tr>';
-
+            document.getElementById('pdf-rev-node').innerText = `₹${revenue}`; document.getElementById('pdf-count-node').innerText = count;
+            document.getElementById('pdf-table-body').innerHTML = rowsHtml || '<tr><td colspan="4" class="p-2 text-center text-gray-400">Ledger empty.</td></tr>';
             const element = document.getElementById('pdf-report-template');
-            const options = {
-                margin: 0.5,
-                filename: `Balaji_Store_Sales_Report_${Date.now()}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+            const options = { margin: 0.5, filename: `Report_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
             html2pdf().from(element).set(options).save();
         });
     }
 
-    function openTracker() { document.getElementById('tracker-modal').classList.remove('hidden'); }
-    function openHistory() { document.getElementById('history-modal').classList.remove('hidden'); }
-    function closeModalNode(id) { document.getElementById(id).classList.add('hidden'); }
+    function openTrackerModal() { document.getElementById('tracker-modal').classList.remove('hidden'); }
+    function openHistoryModal() { document.getElementById('history-modal').classList.remove('hidden'); }
+    function closeGlobalModalContainer(id) { document.getElementById(id).classList.add('hidden'); }
 
-    function executeOrderTrackingLoop() {
-        const ph = document.getElementById('track-phone').value.trim().replace(/\D/g, "");
-        const res = document.getElementById('track-result');
-        if (!ph || !res) return;
-
+    function executeOrderTrackingSyncEngine() {
+        const ph = document.getElementById('track-phone').value.trim().replace(/\D/g, ""), res = document.getElementById('track-result'); if (!ph || !res) return;
         rdb.ref('orders').once('value', (snap) => {
-            const data = snap.val() || {};
-            let html = "";
+            const data = snap.val() || {}; let html = "";
             Object.keys(data).reverse().forEach(id => {
-                const o = data[id];
-                if (o.customerPhone === ph) {
+                const o = data[id]; if (o.customerPhone === ph) {
                     const activeStep = o.status === 'Pending' ? 1 : (o.status === 'Preparing' ? 2 : 3);
-                    
-                    html += `
-                    <div class="p-4 bg-gray-50 dark:bg-slate-950 rounded-2xl border dark:border-slate-800 text-[11px] font-bold text-gray-700 dark:text-gray-300">
-                        <div class="flex justify-between font-extrabold mb-3 text-xs text-gray-400">
-                            <span>Status Payload: ${o.status}</span>
-                            <span>Bill Paid: ₹${o.total}</span>
-                        </div>
-                        <div class="space-y-4 relative t-bar">
-                            <div class="t-step flex gap-3 ${activeStep >= 1 ? 'completed text-emerald-600 dark:text-emerald-400' : 'text-gray-300'}">
-                                <i class="fa-solid fa-circle-dot z-10 bg-white dark:bg-slate-950 text-sm"></i>
-                                <div><p>Order Verified & Received</p></div>
-                            </div>
-                            <div class="t-step flex gap-3 ${activeStep >= 2 ? 'completed text-emerald-600 dark:text-emerald-400' : 'text-gray-300'}">
-                                <i class="fa-solid fa-circle-dot z-10 bg-white dark:bg-slate-950 text-sm"></i>
-                                <div><p>Packing essential items inside box</p></div>
-                            </div>
-                            <div class="t-step flex gap-3 ${activeStep >= 3 ? 'completed text-emerald-600 dark:text-emerald-400' : 'text-gray-300'}">
-                                <i class="fa-solid fa-circle-dot z-10 bg-white dark:bg-slate-950 text-sm"></i>
-                                <div><p>Out for Delivery / Dispatched Successfully</p></div>
-                            </div>
-                        </div>
-                    </div>`;
+                    html += `<div class="p-3 bg-gray-50 dark:bg-slate-950 rounded-xl border dark:border-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-300"><div class="flex justify-between mb-2"><span>Status: ${o.status}</span><span>Bill: ₹${o.total}</span></div><div class="space-y-2"><div class="flex gap-2 ${activeStep >= 1 ? 'text-emerald-600' : 'text-slate-300'}"><i class="fa-solid fa-circle text-[8px] mt-1"></i><p>Order Verified</p></div><div class="flex gap-2 ${activeStep >= 2 ? 'text-emerald-600' : 'text-slate-300'}"><i class="fa-solid fa-circle text-[8px] mt-1"></i><p>Sorting & Packing Box</p></div><div class="flex gap-2 ${activeStep >= 3 ? 'text-emerald-600' : 'text-slate-300'}"><i class="fa-solid fa-circle text-[8px] mt-1"></i><p>Dispatched / Delivered</p></div></div></div>`;
                 }
             });
-            res.innerHTML = html || `<p class="text-center text-gray-400 text-xs py-4 font-semibold">Koi record matching status framework nahi mila.</p>`;
+            res.innerHTML = html || `<p class="text-center text-slate-400 text-xs py-2">No active shipments.</p>`;
         });
     }
 
-    function loadUserOrderHistoryLogs() {
-        const ph = document.getElementById('history-phone').value.trim().replace(/\D/g, "");
-        const res = document.getElementById('history-result');
-        if (!ph || !res) return;
-
+    function fetchCompletedUserHistoryLogs() {
+        const ph = document.getElementById('history-phone').value.trim().replace(/\D/g, ""), res = document.getElementById('history-result'); if (!ph || !res) return;
         rdb.ref('orders').once('value', (snap) => {
-            const data = snap.val() || {};
-            let html = "";
+            const data = snap.val() || {}; let html = "";
             Object.keys(data).reverse().forEach(id => {
-                const o = data[id];
-                if (o.customerPhone === ph && o.status === "Completed") {
-                    html += `
-                    <div class="bg-gray-50 dark:bg-slate-950 p-3 rounded-xl text-[11px] font-bold border dark:border-slate-800 flex justify-between items-center">
-                        <div class="w-3/4">
-                            <p class="text-gray-700 dark:text-gray-300 leading-tight">${o.items ? o.items.replace(/%0A/g, ', ') : ''}</p>
-                            <p class="text-[9px] text-gray-400 mt-1">${new Date(o.timestamp).toLocaleDateString()}</p>
-                        </div>
-                        <span class="text-emerald-600 dark:text-emerald-400 font-black text-xs">₹${o.total}</span>
-                    </div>`;
+                const o = data[id]; if (o.customerPhone === ph && o.status === "Completed") {
+                    html += `<div class="bg-gray-50 dark:bg-slate-950 p-2.5 rounded-lg text-[10px] font-bold border dark:border-slate-800 flex justify-between items-center"><div class="w-3/4"><p class="text-slate-700 dark:text-slate-300 truncate">${o.items ? o.items.replace(/%0A/g, ', ') : ''}</p><p class="text-[8px] text-slate-400 mt-0.5">${new Date(o.timestamp).toLocaleDateString()}</p></div><span class="text-emerald-600 font-extrabold">₹${o.total}</span></div>`;
                 }
             });
-            res.innerHTML = html || `<p class="text-center text-gray-400 text-xs py-4 font-semibold">Purani details ledger history khali hai.</p>`;
+            res.innerHTML = html || `<p class="text-center text-slate-400 text-xs py-2">History log empty.</p>`;
         });
     }
 </script>
