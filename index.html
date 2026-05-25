@@ -9,10 +9,13 @@
         tailwind.config = { darkMode: 'class' }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNocmkgU2h5YW0gRmFzdCBGb29kIiwKICAic2hvcnxfbmFtZSI6ICJTaHlhbUZvb2QiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y4ZmFmYyIsCiAgInRoZW1lX2NvbG9yIjogIiNkYzI2MjYiLAogICpY29ucyI6IFtsCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9pLmliYi5jby8xR0NOUnQwaC9JTUctMjAyNjA1MTMtV0EwMDAwLmpwZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvanBlZyIKICAgIH0KICBdCn0=">
-<style>
+
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNocmkgU2h5YW0gRmFzdCBGb29kIiwKICAic2hvcnxfbmFtZSI6ICJTaHlhbUZvb2QiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y4ZmFmYyIsCiAgInRoZW1lX2NvbG9yIjogIiNkYzI2MjYiLAogInR5cGUiOiAiaW1hZ2UvanBlZyIKICB9Cn0=">
+
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght=300;500;700;900&display=swap');
         body { font-family: 'Outfit', sans-serif; padding-bottom: 160px; }
         .glass-header { backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,0,0,0.1); }
@@ -48,6 +51,7 @@
     <p class="text-gray-500 dark:text-gray-400 font-bold mt-2">Kripya khulne ka intezaar karein.</p>
     <button onclick="loginAdmin()" class="mt-10 px-8 py-3 bg-gray-100 dark:bg-slate-800 rounded-full text-xs font-black text-gray-500 uppercase tracking-widest border btn-press">Owner Login</button>
 </div>
+
 <header class="glass-header bg-white/95 dark:bg-slate-900/95 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-sm">
     <div class="flex items-center gap-3">
         <img src="https://i.ibb.co/1GCNRt0h/IMG-20260513-WA0000.jpg" class="w-12 h-12 rounded-full border-2 border-red-500 object-cover shadow" alt="Logo">
@@ -70,8 +74,9 @@
         <button onclick="loginAdmin()" title="Admin" class="w-10 h-10 rounded-full bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 text-gray-500 flex items-center justify-center btn-press text-sm"><i class="fa-solid fa-sliders"></i></button>
     </div>
 </header>
+
 <div class="max-w-2xl mx-auto px-4 py-5">
-<div id="admin-panel" class="hidden bg-gray-900 rounded-[2rem] shadow-2xl p-5 mb-8 text-white">
+    <div id="admin-panel" class="hidden bg-gray-900 rounded-[2rem] shadow-2xl p-5 mb-8 text-white">
         <div class="flex justify-between items-center mb-5">
             <h2 class="text-xl font-black text-yellow-400"><i class="fa-solid fa-crown mr-2"></i>Admin Dashboard</h2>
             <div class="flex items-center gap-2">
@@ -81,7 +86,8 @@
         </div>
 
         <button id="toggle-shop-btn" onclick="toggleShop()" class="w-full py-4 rounded-xl font-black mb-5 uppercase btn-press text-sm">Checking...</button>
-<div class="grid grid-cols-3 gap-2 mb-5">
+
+        <div class="grid grid-cols-3 gap-2 mb-5">
             <div class="bg-white/5 rounded-2xl p-3 text-center border border-white/10">
                 <p id="stat-revenue" class="text-xl font-black text-green-400">₹0</p>
                 <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Today Revenue</p>
@@ -95,7 +101,8 @@
                 <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Top Item</p>
             </div>
         </div>
-<div class="bg-white/5 p-4 rounded-2xl mb-5 border border-white/10">
+
+        <div class="bg-white/5 p-4 rounded-2xl mb-5 border border-white/10">
             <p class="font-bold text-gray-400 text-[10px] mb-3 uppercase tracking-widest">Naya Item Add Karein</p>
             <div class="grid grid-cols-12 gap-2 mb-2">
                 <input id="new-i" placeholder="🍔" class="col-span-2 p-3 bg-black/30 rounded-xl text-center text-sm outline-none border border-white/10 text-white">
@@ -117,26 +124,26 @@
             <p class="font-bold text-gray-400 text-[10px] mt-5 mb-2 uppercase tracking-widest">Manage Menu & Prices</p>
             <div id="admin-menu-list" class="space-y-3 max-h-56 overflow-y-auto pr-1 scroll-hide"></div>
         </div>
-<div class="border-t border-white/10 pt-5">
+
+        <div class="border-t border-white/10 pt-5">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-black text-orange-400"><i class="fa-solid fa-receipt mr-2"></i>Live Orders</h3>
                 <div class="flex items-center gap-2">
-                    <button onclick="activateNotificationSoundEngine(this)" class="bg-amber-500 text-slate-950 font-black text-[9px] px-2 py-1 rounded-lg uppercase tracking-wider btn-press animate-pulse flex items-center gap-1 mr-2">
-                        <i class="fa-solid fa-volume-high"></i> Sound On Karein 🔔
-                    </button>
                     <span id="pending-badge" class="bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full">0 Pending</span>
                 </div>
             </div>
             <div id="admin-orders-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-1 scroll-hide"></div>
         </div>
     </div>
-<div id="cat-tabs" class="flex gap-2 overflow-x-auto pb-3 mb-5 scroll-hide"></div>
+
+    <div id="cat-tabs" class="flex gap-2 overflow-x-auto pb-3 mb-5 scroll-hide"></div>
 
     <div class="flex justify-between items-center mb-4 border-b-2 border-red-100 dark:border-slate-700 pb-2 border-dashed">
         <h2 class="text-xl font-black text-gray-800 dark:text-white">Today's Menu</h2>
     </div>
     <div id="menu-box" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 </div>
+
 <div id="floating-cart" class="fixed bottom-6 left-4 right-4 max-w-2xl mx-auto z-40 transition-all duration-300 translate-y-36">
     <div onclick="openCheckout()" class="bg-gradient-to-r from-green-600 to-emerald-500 p-4 rounded-2xl shadow-xl flex justify-between items-center text-white cursor-pointer btn-press">
         <div>
@@ -146,6 +153,7 @@
         <div class="flex items-center gap-2 font-black text-sm bg-white/20 px-4 py-2 rounded-xl">VIEW CART <i class="fa-solid fa-bag-shopping"></i></div>
     </div>
 </div>
+
 <div id="checkout-sheet" class="sheet fixed inset-0 z-50 flex flex-col justify-end bg-black/50 backdrop-blur-sm">
     <div class="bg-white dark:bg-slate-800 w-full max-w-2xl mx-auto rounded-t-[2.5rem] shadow-2xl flex flex-col max-h-[92vh]">
         <div class="p-5 border-b dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-700 rounded-t-[2.5rem] flex-shrink-0">
@@ -160,7 +168,8 @@
                     <span id="sheet-total" class="text-red-600 text-xl">₹0</span>
                 </div>
             </div>
-<div class="space-y-3">
+
+            <div class="space-y-3">
                 <input id="u-n" placeholder="Aapka Naam *" class="w-full p-4 bg-gray-50 dark:bg-slate-900 border dark:border-slate-700 rounded-xl font-bold outline-none text-sm">
                 <input id="u-p" type="tel" placeholder="Mobile Number *" class="w-full p-4 bg-gray-50 dark:bg-slate-900 border dark:border-slate-700 rounded-xl font-bold outline-none text-sm">
                 
@@ -188,9 +197,10 @@
         </div>
     </div>
 </div>
+
 <div id="qr-modal" class="hidden fixed inset-0 bg-black/95 z-[3000] flex items-center justify-center p-6 text-center backdrop-blur-md">
     <div class="bg-white rounded-[2.5rem] p-8 max-w-xs w-full">
-        <h3 class="font-black text-2xl mb-1 gradient-text">JAY SHREE SHYAM</h3>
+        <h3 class="font-black text-2xl mb-1 gradient-text">BALAJI VARIETY STORE</h3>
         <p class="text-xs text-gray-400 font-bold mb-4">QR scan karke payment karein</p>
         <img src="https://i.ibb.co/chqR1YGg/IMG-20260513-WA0001.jpg" class="w-full rounded-2xl border-4 border-red-100 mb-6 shadow-lg" alt="QR Code">
         <button onclick="confirmOrderAndSave('PAID')" class="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-black py-4 rounded-2xl shadow-lg mb-3 btn-press">✅ PAYMENT DONE</button>
@@ -225,10 +235,22 @@
         <div id="history-result" class="overflow-y-auto scroll-hide space-y-3"></div>
     </div>
 </div>
-// ==========================================
-// PART 16: Application States & Core Lifecycle Event Hooks
-// ==========================================
+
 <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAD6rZ9pbMfkCsYs3ItGoIe89H38mod504",
+      authDomain: "shri-shyam-fast-food.firebaseapp.com",
+      databaseURL: "https://shri-shyam-fast-food-default-rtdb.firebaseio.com/",
+      projectId: "shri-shyam-fast-food",
+      storageBucket: "shri-shyam-fast-food.firebasestorage.app",
+      messagingSenderId: "828353855950",
+      appId: "1:828353855950:web:96d62828e8e410e8812b9f",
+      measurementId: "G-38J1Y2M8LD"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const rdb = firebase.database();
+
     let menuData = {};
     let cart = {}; 
     let currentCategory = "All";
@@ -242,122 +264,57 @@
         initTheme();
         initAddressSlots();
         requestNotificationPermission();
-        initializeDatabaseStreams(); // Core Connector Initiation
-    });
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPWAInstallationPromptObj = e;
-        const targetBtn = document.getElementById('pwa-install-btn');
-        if(targetBtn) targetBtn.classList.remove('hidden');
-    });
-
-    function triggerPWAInstallationPrompt() {
-        if (deferredPWAInstallationPromptObj) {
-            deferredPWAInstallationPromptObj.prompt();
-            deferredPWAInstallationPromptObj.userChoice.then(() => { deferredPWAInstallationPromptObj = null; });
-        }
-    }
-// ==========================================
-// PART 17: Loud Loop Chime Audio Core Automation Drivers
-// ==========================================
-    let lastKnownOrdersCount = 0;
-    let isSoundEngineActivated = false;
-
-    function activateNotificationSoundEngine(btnElement) {
-        const soundTrack = document.getElementById('order-alert-sound');
-        if (!soundTrack) return;
-        soundTrack.play().then(() => {
-            soundTrack.pause();
-            soundTrack.currentTime = 0;
-            isSoundEngineActivated = true;
-            btnElement.innerText = "🔔 Sound Active";
-            btnElement.className = "bg-emerald-600 text-white font-black text-[9px] px-2 py-1 rounded-lg uppercase tracking-wider btn-press";
-            alert("Notification Alarm active ho gaya hai!");
-        }).catch(() => { alert("Audio Engine failure context."); });
-    }
-
-    function triggerLoudOrderAlertChimeLoop() {
-        const alarmSound = document.getElementById('order-alert-sound');
-        if (alarmSound) {
-            alarmSound.play().catch(() => { console.log("Audio contexts trigger waiting user interactions."); });
-        }
-        triggerNativePushAppNotification();
-    }
-
-    function stopOrderAlertLoopSound() {
-        const alarmSound = document.getElementById('order-alert-sound');
-        if (alarmSound) {
-            alarmSound.pause();
-            alarmSound.currentTime = 0;
-        }
-    }
-// ==========================================
-// PART 18: Operational Database Structural Synchronizers (Menu & Orders Realtime Observers)
-// ==========================================
-    function initializeDatabaseStreams() {
-        // Shop Status Listener
+        
         rdb.ref('shopStatus').on('value', snap => {
             isShopOpen = snap.val() !== false;
             updateShopStatusUI();
         });
 
-        // Menu Product Catalog Sync Ingestion Hook
         rdb.ref('menu').on('value', snap => {
             menuData = snap.val() || {};
-            renderMenuCatalogGrid();
-            renderAdminMenuListTable();
-            renderCategoryCarouselTabs();
+            renderMenu();
+            renderAdminMenu();
+            renderTabs();
         });
 
-        // FIXED INSTANT ORDER DATA RENDERING ENGINE LOOPS
         rdb.ref('orders').on('value', snap => {
-            const ordersPayload = snap.val() || {};
-            const activeCount = Object.keys(ordersPayload).length;
-
-            // Instantly syncs and rerenders UI layers without triggering manual pull updates
-            renderAdminLiveOrdersDashboardQueue(ordersPayload);
-            recalculateOperationalAnalyticsMetrics(ordersPayload);
-
-            if (initialSyncCompleted) {
-                if (activeCount > lastKnownOrdersCount) {
-                    triggerLoudOrderAlertChimeLoop();
-                }
-            } else {
-                initialSyncCompleted = true;
-            }
-            lastKnownOrdersCount = activeCount;
+            const data = snap.val() || {};
+            renderAdminOrders(data);
+            calculateStats(data);
         });
-    }
+    });
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPWAInstallationPromptObj = e;
+        const target
 // ==========================================
-// PART 19: UI Builders - Category Carousel Tabs & Menu Cards Presenters
+// PART 19: Category Navigation & Core Menu Cards Renderer
 // ==========================================
-    function renderCategoryCarouselTabs() {
-        const track = document.getElementById('cat-tabs');
-        if(!track) return;
-        track.innerHTML = '';
+    function renderTabs() {
+        const catTabs = document.getElementById('cat-tabs');
+        if(!catTabs) return;
+        catTabs.innerHTML = '';
         categories.forEach(cat => {
             const btn = document.createElement('button');
-            btn.className = `px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all border dark:border-slate-700 text-gray-500 dark:text-gray-400 font-bold bg-white dark:bg-slate-800 ${currentCategory === cat ? 'tab-active shadow-md' : 'btn-press'}`;
+            btn.className = `px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all border dark:border-slate-700 font-bold bg-white dark:bg-slate-800 ${currentCategory === cat ? 'tab-active shadow-md' : 'text-gray-500 dark:text-gray-400 btn-press'}`;
             btn.innerText = cat;
-            btn.onclick = () => { currentCategory = cat; renderCategoryCarouselTabs(); renderMenuCatalogGrid(); };
-            track.appendChild(btn);
+            btn.onclick = () => { currentCategory = cat; renderTabs(); renderMenu(); };
+            catTabs.appendChild(btn);
         });
     }
 
-    function renderMenuCatalogGrid() {
-        const box = document.getElementById('menu-box');
-        if(!box) return;
-        box.innerHTML = '';
-        
+    function renderMenu() {
+        const menuBox = document.getElementById('menu-box');
+        if(!menuBox) return;
+        menuBox.innerHTML = '';
         Object.keys(menuData).forEach(id => {
             const item = menuData[id];
             if(currentCategory !== "All" && item.category !== currentCategory) return;
-            
             const qty = cart[id] || 0;
-            const card = document.createElement('div');
-            card.className = "bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 flex justify-between items-center";
-            card.innerHTML = `
+            const div = document.createElement('div');
+            div.className = "bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 flex justify-between items-center";
+            div.innerHTML = `
                 <div class="flex items-center gap-3">
                     <span class="text-3xl">${item.icon || '🍔'}</span>
                     <div>
@@ -368,165 +325,105 @@
                 <div>
                     ${qty > 0 ? `
                         <div class="flex items-center bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-xl px-2.5 py-1.5 gap-3 font-black shadow-md">
-                            <button onclick="updateCartQty('${id}', -1)" class="text-sm font-black"><i class="fa-solid fa-minus"></i></button>
+                            <button onclick="updateQty('${id}', -1)" class="text-sm font-black">-</button>
                             <span class="text-sm font-black">${qty}</span>
-                            <button onclick="updateCartQty('${id}', 1)" class="text-sm font-black"><i class="fa-solid fa-plus"></i></button>
+                            <button onclick="updateQty('${id}', 1)" class="text-sm font-black">+</button>
                         </div>
                     ` : `
-                        <button onclick="updateCartQty('${id}', 1)" class="px-5 py-2 bg-gray-100 dark:bg-slate-700 text-slate-800 dark:text-white font-black text-xs rounded-xl border dark:border-slate-600 btn-press uppercase tracking-wider">ADD</button>
+                        <button onclick="updateQty('${id}', 1)" class="px-5 py-2 bg-gray-100 dark:bg-slate-700 text-slate-800 dark:text-white font-black text-xs rounded-xl border dark:border-slate-600 btn-press uppercase tracking-wider">ADD</button>
                     `}
                 </div>
             `;
-            box.appendChild(card);
+            menuBox.appendChild(div);
         });
     }
 // ==========================================
-// PART 20: Transactional Cart Controls & Micro-Cart View Dock Mutators
+// PART 20: Persistent Basket Utility Calculations
 // ==========================================
-    function updateCartQty(id, modifier) {
-        let count = cart[id] || 0;
-        count += modifier;
-        if(count <= 0) delete cart[id];
-        else cart[id] = count;
-        
-        renderMenuCatalogGrid();
-        synchronizeFloatingCartState();
+    function updateQty(id, change) {
+        let qty = cart[id] || 0;
+        qty += change;
+        if(qty <= 0) delete cart[id];
+        else cart[id] = qty;
+        renderMenu();
+        updateFloatingCart();
     }
 
-    function synchronizeFloatingCartState() {
+    function updateFloatingCart() {
         const floatCart = document.getElementById('floating-cart');
-        const floatQty = document.getElementById('float-items');
+        const floatItems = document.getElementById('float-items');
         const floatTotal = document.getElementById('float-total');
-        
-        let totalItems = 0, grossValue = 0;
+        let totalItems = 0;
+        let totalPrice = 0;
         Object.keys(cart).forEach(id => {
             totalItems += cart[id];
-            grossValue += (cart[id] * menuData[id].price);
+            totalPrice += cart[id] * menuData[id].price;
         });
-
         if(totalItems > 0) {
-            floatQty.innerText = `${totalItems} Items Selected`;
-            floatTotal.innerText = `₹${grossValue}`;
-            floatCart.className = "fixed bottom-6 left-4 right-4 max-w-2xl mx-auto z-40 transition-all duration-300 translate-y-0";
+            floatItems.innerText = `${totalItems} Items`;
+            floatTotal.innerText = `₹${totalPrice}`;
+            floatCart.classList.remove('translate-y-36');
         } else {
-            floatCart.className = "fixed bottom-6 left-4 right-4 max-w-2xl mx-auto z-40 transition-all duration-300 translate-y-36";
-            document.getElementById('checkout-sheet').classList.remove('active');
+            floatCart.classList.add('translate-y-36');
+            closeCheckout();
         }
     }
 // ==========================================
-// PART 21: Sliding Checkouts View Controllers & Address Subsystem Storage Maps
-// ==========================================
-    function openCheckout() {
-        document.getElementById('checkout-sheet').classList.add('active');
-        rebuildCartCheckoutSummaryList();
-    }
-
-    function closeCheckout() { document.getElementById('checkout-sheet').classList.remove('active'); }
-
-    function rebuildCartCheckoutSummaryList() {
-        const container = document.getElementById('cart-summary');
-        const totalNode = document.getElementById('sheet-total');
-        container.innerHTML = '';
-        let netPayable = 0;
-
-        Object.keys(cart).forEach(id => {
-            const product = menuData[id];
-            const cost = cart[id] * product.price;
-            netPayable += cost;
-
-            const row = document.createElement('div');
-            row.className = "flex justify-between text-sm items-center font-bold";
-            row.innerHTML = `
-                <span>${product.name} <span class="text-gray-400 font-medium">x${cart[id]}</span></span>
-                <span>₹${cost}</span>
-            `;
-            container.appendChild(row);
-        });
-        totalNode.innerText = `₹${netPayable}`;
-    }
-
-    function saveCurrentAddress() {
-        const addr = document.getElementById('u-a').value.trim();
-        if(!addr) return;
-        let saved = JSON.parse(localStorage.getItem('balaji_saved_addresses') || '[]');
-        if(!saved.includes(addr)) {
-            saved.push(addr);
-            localStorage.setItem('balaji_saved_addresses', JSON.stringify(saved));
-            initAddressSlots();
-        }
-    }
-
-    function initAddressSlots() {
-        const track = document.getElementById('address-slots');
-        if(!track) return;
-        track.innerHTML = '';
-        let saved = JSON.parse(localStorage.getItem('balaji_saved_addresses') || '[]');
-        saved.forEach(addr => {
-            const btn = document.createElement('button');
-            btn.className = "px-3 py-1 bg-white dark:bg-slate-800 text-[11px] font-bold rounded-lg border dark:border-slate-700 whitespace-nowrap";
-            btn.innerText = addr;
-            btn.onclick = () => { document.getElementById('u-a').value = addr; };
-            track.appendChild(btn);
-        });
-    }
-// ==========================================
-// PART 22: Client Checkout Pipeline Ingestion Mechanics (Order Placement Core)
+// PART 22: Client Orders Transaction Streams Processors
 // ==========================================
     function processPayment() {
-        const pType = document.getElementById('u-pay').value;
-        if(pType === "PAID") {
+        const payMethod = document.getElementById('u-pay').value;
+        if(payMethod === "PAID") {
             document.getElementById('qr-modal').classList.remove('hidden');
         } else {
             confirmOrderAndSave('COD');
         }
     }
 
-    function confirmOrderAndSave(paymentMethod) {
+    function confirmOrderAndSave(payMethod) {
         const name = document.getElementById('u-n').value.trim();
         const phone = document.getElementById('u-p').value.trim();
         const address = document.getElementById('u-a').value.trim();
-        const timeFrame = document.getElementById('u-t').value;
+        const time = document.getElementById('u-t').value;
+        if(!name || !phone || !address) { alert("Fields fill karein!"); return; }
 
-        if(!name || !phone || !address) { alert("Kripya saari mandatory fields bharein!"); return; }
-
-        let payloadItems = {};
-        let grandCost = 0;
+        let orderItems = {};
         Object.keys(cart).forEach(id => {
-            payloadItems[id] = { name: menuData[id].name, qty: cart[id], price: menuData[id].price };
-            grandCost += (cart[id] * menuData[id].price);
+            orderItems[id] = { name: menuData[id].name, qty: cart[id], price: menuData[id].price };
         });
 
-        const orderData = {
+        let total = 0;
+        Object.keys(cart).forEach(id => { total += cart[id] * menuData[id].price; });
+
+        rdb.ref('orders').push({
             customerName: name,
             customerPhone: phone,
             customerAddress: address,
-            expectedTime: timeFrame,
-            payment: paymentMethod,
-            items: payloadItems,
-            totalBill: grandCost,
-            status: "Pending Ingestion",
-            timestamp: new Date().toISOString()
-        };
-
-        const targetRef = rdb.ref('orders').push();
-        targetRef.set(orderData).then(() => {
-            alert("Order Safalta purvak bhej diya gaya hai!");
+            expectedTime: time,
+            payment: payMethod,
+            items: orderItems,
+            totalBill: total,
+            status: "Pending Ingestion"
+        }).then(() => {
+            alert("Order placed successfully!");
             document.getElementById('qr-modal').classList.add('hidden');
             cart = {};
-            synchronizeFloatingCartState();
+            updateFloatingCart();
             closeCheckout();
-            renderMenuCatalogGrid();
+            renderMenu();
         });
     }
 // ==========================================
-// PART 23: Admin Operations - Ingestion Node Menu Tables Generators
+// PART 23: Security Interceptors & Core Administrative Ingestion Node Handlers
 // ==========================================
     function loginAdmin() {
-        const pass = prompt("Enter Operational Password Context Key:");
+        const pass = prompt("Enter password:");
         if(pass === "Pardeep@Tailor") {
             document.getElementById('admin-panel').classList.remove('hidden');
             document.getElementById('closed-screen').classList.add('hidden');
-        } else { alert("Verification Key Scope Rejected."); }
+        } else {
+            alert("Wrong password!");
+        }
     }
 
     function updateShopStatusUI() {
@@ -534,60 +431,71 @@
         const text = document.getElementById('shop-text');
         const btn = document.getElementById('toggle-shop-btn');
         const closedScreen = document.getElementById('closed-screen');
-
         if(isShopOpen) {
-            indicator.className = "flex items-center gap-1.5 text-[10px] font-black uppercase text-green-500 animate-pulse";
-            text.innerText = "ONLINE / OPEN";
-            if(btn) { btn.innerText = "🚨 SHOP BAND KAREIN"; btn.className = "w-full py-4 bg-red-600 rounded-xl text-white font-black uppercase btn-press text-sm"; }
+            indicator.querySelector('.status-dot').className = "status-dot bg-green-500 animate-pulse";
+            text.innerText = "OPEN";
+            btn.innerText = "CLOSE SHOP";
+            btn.className = "w-full py-4 bg-red-600 rounded-xl font-black mb-5 uppercase btn-press text-sm text-white";
             closedScreen.classList.add('hidden');
         } else {
-            indicator.className = "flex items-center gap-1.5 text-[10px] font-black uppercase text-red-500";
-            text.innerText = "OFFLINE / CLOSED";
-            if(btn) { btn.innerText = "✅ SHOP CHALU KAREIN"; btn.className = "w-full py-4 bg-green-600 rounded-xl text-white font-black uppercase btn-press text-sm"; }
+            indicator.querySelector('.status-dot').className = "status-dot bg-red-500";
+            text.innerText = "CLOSED";
+            btn.innerText = "OPEN SHOP";
+            btn.className = "w-full py-4 bg-green-600 rounded-xl font-black mb-5 uppercase btn-press text-sm text-white";
             closedScreen.classList.remove('hidden');
         }
     }
 
-    function toggleShop() { rdb.ref('shopStatus').set(!isShopOpen); }
+    function toggleShop() {
+        rdb.ref('shopStatus').set(!isShopOpen);
+    }
 
     function addItem() {
         const icon = document.getElementById('new-i').value.trim() || '🍔';
         const name = document.getElementById('new-n').value.trim();
         const price = parseFloat(document.getElementById('new-p').value);
-        const cat = document.getElementById('new-cat').value;
-
-        if(!name || isNaN(price) || cat === "All") { alert("Fields check karein!"); return; }
-        rdb.ref('menu').push({ icon, name, price, category: cat });
-
+        const category = document.getElementById('new-cat').value;
+        if(!name || isNaN(price) || category === "All") { alert("Fields fill karein!"); return; }
+        rdb.ref('menu').push({ icon, name, price, category });
         document.getElementById('new-n').value = '';
         document.getElementById('new-p').value = '';
     }
 
-    function deleteItem(id) { if(confirm("Kya aap sach me ye item menu se hatana chahte hain?")) rdb.ref(`menu/${id}`).remove(); }
+    function deleteItem(id) {
+        if(confirm("Delete karein?")) rdb.ref(`menu/${id}`).remove();
+    }
+
+    function renderAdminMenu() {
+        const list = document.getElementById('admin-menu-list');
+        if(!list) return;
+        list.innerHTML = '';
+        Object.keys(menuData).forEach(id => {
+            const item = menuData[id];
+            const div = document.createElement('div');
+            div.className = "flex justify-between items-center p-2 bg-white/5 rounded-xl text-xs text-white border border-white/5";
+            div.innerHTML = `<span>${item.icon} ${item.name} - ₹${item.price}</span><button onclick="deleteItem('${id}')" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button>`;
+            list.appendChild(div);
+        });
+    }
 // ==========================================
-// PART 24: Admin Live Order Queue Visualizer Pipeline (Realtime Dashboard Sync)
+// PART 24: Admin Panel LIVE Orders Pipeline Core (Look & Layout Intact)
 // ==========================================
-    function renderAdminLiveOrdersDashboardQueue(ordersDataMap) {
+    function renderAdminOrders(orders) {
         const list = document.getElementById('admin-orders-list');
         const badge = document.getElementById('pending-badge');
         if(!list) return;
         list.innerHTML = '';
-        let pendingCounter = 0;
-
-        Object.keys(ordersDataMap).reverse().forEach(id => {
-            const order = ordersDataMap[id];
-            if(order.status === "Pending Ingestion") pendingCounter++;
-
-            const card = document.createElement('div');
-            card.className = "bg-white/5 border border-white/10 p-4 rounded-2xl text-xs space-y-2 relative";
-            
-            let itemLines = '';
+        let pending = 0;
+        Object.keys(orders).reverse().forEach(id => {
+            const order = orders[id];
+            if(order.status === "Pending Ingestion") pending++;
+            let itemsText = '';
             Object.keys(order.items || {}).forEach(k => {
-                const line = order.items[k];
-                itemLines += `<p class="text-gray-400 font-mono">&bull; ${line.name} (x${line.qty}) - ₹${line.price * line.qty}</p>`;
+                itemsText += `<p class="text-gray-400 font-medium">&bull; ${order.items[k].name} x ${order.items[k].qty}</p>`;
             });
-
-            card.innerHTML = `
+            const div = document.createElement('div');
+            div.className = "bg-white/5 border border-white/10 p-4 rounded-2xl text-xs space-y-2 relative text-white";
+            div.innerHTML = `
                 <div class="flex justify-between items-start border-b border-white/5 pb-2">
                     <div>
                         <h4 class="font-black text-yellow-400 font-mono text-sm uppercase">ID: ${id.substring(1,8)}</h4>
@@ -599,121 +507,85 @@
                         <span class="text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded bg-white/10 mt-1 inline-block">${order.payment}</span>
                     </div>
                 </div>
-                <div class="py-1">${itemLines}</div>
+                <div class="py-1">${itemsText}</div>
                 <div class="flex items-center justify-between border-t border-white/5 pt-2">
                     <span class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded bg-orange-500/10 text-orange-400">${order.status}</span>
                     <div class="flex gap-1.5">
-                        <select onchange="updateOrderStatusStageNode('${id}', this.value, '${order.customerPhone}', '${order.customerName}')" class="bg-black/40 border border-white/10 rounded-xl px-2 py-1.5 text-[11px] font-bold text-white outline-none">
+                        <select onchange="updateStatus('${id}', this.value)" class="bg-black/40 border border-white/10 rounded-xl px-2 py-1.5 text-[11px] font-bold text-white outline-none">
                             <option value="">Status...</option>
                             <option value="Preparing">Preparing</option>
                             <option value="Out For Delivery">Out For Delivery</option>
                             <option value="Completed">Completed</option>
                         </select>
-                        <button onclick="printThermalInvoiceReceipt('${id}')" class="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center text-gray-300 btn-press"><i class="fa-solid fa-print"></i></button>
+                        <button onclick="printSlip('${id}')" class="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center text-gray-300 btn-press"><i class="fa-solid fa-print"></i></button>
                     </div>
                 </div>
             `;
-            list.appendChild(card);
+            list.appendChild(div);
         });
-        if(badge) badge.innerText = `${pendingCounter} Pending`;
+        if(badge) badge.innerText = `${pending} Pending`;
     }
 
-    function updateOrderStatusStageNode(id, newStatus, phone, name) {
-        if(!newStatus) return;
-        
-        // Instant Active Override Hook: stops sound loop when admin acts on pending data
-        stopOrderAlertLoopSound();
-
-        rdb.ref(`orders/${id}/status`).set(newStatus).then(() => {
-            if(confirm("WhatsApp notification trigger string?")) {
-                let msg = `Hello ${name}, aapka order ab *${newStatus}* stage par hai. Thank you - Shri Shyam Fast Food!`;
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-            }
-        });
+    function updateStatus(id, status) {
+        if(!status) return;
+        rdb.ref(`orders/${id}/status`).set(status);
     }
 // ==========================================
-// PART 25: Thermal Print Engines, Analytics Composers & Document System Closures
+// PART 25: POS Slip Hardware Printing Engine, Structural Analytics & Closures
 // ==========================================
-    function printThermalInvoiceReceipt(id) {
+    function printSlip(id) {
         rdb.ref(`orders/${id}`).once('value', snap => {
             const order = snap.val();
             if(!order) return;
             let rows = '';
             Object.keys(order.items || {}).forEach(k => {
-                const l = order.items[k];
-                rows += `${l.name} x${l.qty} = ₹${l.price*l.qty}\n`;
+                rows += `${order.items[k].name} x ${order.items[k].qty} = ₹${order.items[k].price * order.items[k].qty}\n`;
             });
-            const slip = `
---------------------------------
-     SHRI SHYAM FAST FOOD     
---------------------------------
-Order ID: ${id.substring(1,9).toUpperCase()}
-Customer: ${order.customerName}
-Phone:    ${order.customerPhone}
-Address:  ${order.customerAddress}
---------------------------------
-${rows}--------------------------------
-GRAND TOTAL: ₹${order.totalBill}
-Payment:     ${order.payment}
-Expected:    ${order.expectedTime}
---------------------------------
-   Thank You! Visit Again!   
-            `;
-            document.getElementById('print-content').innerText = slip;
+            document.getElementById('print-content').innerText = `ID: ${id}\nName: ${order.customerName}\nPhone: ${order.customerPhone}\nAddress: ${order.customerAddress}\n\n${rows}\nTotal: ₹${order.totalBill}`;
             window.print();
         });
     }
 
-    function recalculateOperationalAnalyticsMetrics(ordersDataMap) {
-        let rev = 0, itemsMap = {};
-        Object.keys(ordersDataMap).forEach(k => {
-            const o = ordersDataMap[k];
-            rev += (o.totalBill || 0);
-            Object.keys(o.items || {}).forEach(ik => {
-                itemsMap[o.items[ik].name] = (itemsMap[o.items[ik].name] || 0) + o.items[ik].qty;
+    function calculateStats(orders) {
+        let revenue = 0;
+        let count = Object.keys(orders).length;
+        let items = {};
+        Object.keys(orders).forEach(id => {
+            revenue += orders[id].totalBill;
+            Object.keys(orders[id].items || {}).forEach(k => {
+                items[orders[id].items[k].name] = (items[orders[id].items[k].name] || 0) + orders[id].items[k].qty;
             });
         });
-        
-        document.getElementById('stat-orders').innerText = Object.keys(ordersDataMap).length;
-        document.getElementById('stat-revenue').innerText = `₹${rev}`;
-        
-        let topItem = '-';
-        let topCount = 0;
-        Object.keys(itemsMap).forEach(name => {
-            if(itemsMap[name] > topCount) { topCount = itemsMap[name]; topItem = name; }
-        });
-        document.getElementById('stat-top').innerText = topItem;
+        document.getElementById('stat-revenue').innerText = `₹${revenue}`;
+        document.getElementById('stat-orders').innerText = count;
+        let top = Object.keys(items).reduce((a, b) => items[a] > items[b] ? a : b, '-');
+        document.getElementById('stat-top').innerText = top;
     }
 
-    function renderAdminMenuListTable() {
-        const container = document.getElementById('admin-menu-list');
-        if(!container) return;
-        container.innerHTML = '';
-        Object.keys(menuData).forEach(id => {
-            const item = menuData[id];
-            const div = document.createElement('div');
-            div.className = "flex justify-between items-center bg-white/5 border border-white/5 p-2 rounded-xl text-xs";
-            div.innerHTML = `
-                <span class="truncate pr-2">${item.icon} ${item.name} (₹${item.price})</span>
-                <button onclick="deleteItem('${id}')" class="text-red-500 w-6 h-6 rounded bg-red-500/10 flex items-center justify-center btn-press"><i class="fa-solid fa-trash text-[10px]"></i></button>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    function generateDailyReport() { alert("Report Engine data compilation sequence authorized."); }
-    function trackOrder() { alert("Tracker logic online initialization sync."); }
-    function loadHistory() { alert("History metrics repository query mapping initialization."); }
     function openTracker() { document.getElementById('tracker-modal').classList.remove('hidden'); }
     function openHistory() { document.getElementById('history-modal').classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
     function initTheme() { if(window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark'); }
     function requestNotificationPermission() { if("Notification" in window) Notification.requestPermission(); }
-    function triggerNativePushAppNotification() {
-        if("Notification" in window && Notification.permission === "granted") {
-            new Notification("🚨 NAYA ORDER AAYA HAI!", { body: "Shri Shyam Fast Food par ek aur naya order aaya hai, jaldi check karein!" });
-        }
+
+    function generateDailyReport() {
+        document.getElementById('report-content').innerText = "Daily Summary Report Data Placeholder";
+        window.print();
+    }
+
+    function trackOrder() {
+        const phone = document.getElementById('track-phone').value.trim();
+        const res = document.getElementById('track-result');
+        if(!phone) { res.innerHTML = `<p class="text-center text-xs text-red-500 py-2">Kripya phone number daalein!</p>`; return; }
+        res.innerHTML = `<p class="text-center text-sm text-gray-500 font-bold py-4">Searching orders for ${phone}...</p>`;
+    }
+
+    function loadHistory() {
+        const phone = document.getElementById('history-phone').value.trim();
+        const res = document.getElementById('history-result');
+        if(!phone) { res.innerHTML = `<p class="text-center text-xs text-red-500 py-2">Kripya phone number daalein!</p>`; return; }
+        res.innerHTML = `<p class="text-center text-sm text-gray-500 font-bold py-4">Loading history for ${phone}...</p>`;
     }
 </script>
 </body>
