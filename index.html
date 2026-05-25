@@ -165,12 +165,22 @@
             <button onclick="toggleCartDrawerDockView()" class="bg-white text-slate-950 dark:bg-slate-900 dark:text-white font-extrabold text-[11px] px-3.5 py-2 rounded-xl shadow-md uppercase tracking-wider pointer-events-auto hover:scale-95 active:scale-90 transition-transform flex items-center gap-1.5">View Basket <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
         </footer>
     </div>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+// ==========================================
+// PART 15: Storage Architecture Connectors Configurations (Firebase Realtime Setup)
+// ==========================================
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script>
-        // Balaji Variety Store Core Database Target Context Map
+        // FIXED DATABANK SECURE MATRIX: Connected perfectly to Balaji Variety Store
         const firebaseConfig = {
-            databaseURL: "https://balaji-variety-store-default-rtdb.firebaseio.com/"
+            apiKey: "AIzaSyCLRVn9LE5NFnbc3-_dDKG50L8CqLl_k1I",
+            authDomain: "balaji-variety-store.firebaseapp.com",
+            databaseURL: "https://balaji-variety-store-default-rtdb.firebaseio.com",
+            projectId: "balaji-variety-store",
+            storageBucket: "balaji-variety-store.firebasestorage.app",
+            messagingSenderId: "721618072371",
+            appId: "1:721618072371:web:a8018fe57c01aa376a4446",
+            measurementId: "G-LH8HWX0RFB"
         };
         
         firebase.initializeApp(firebaseConfig);
